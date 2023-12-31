@@ -33,17 +33,18 @@ local function CreateProjectileFolders()
 end
 
 local function ProcessSettings(Settings: {}): {}?
+	local SettingsUtilsModule = script.ServerModules.SettingsTableUtils
     local SettingsScript = script.DefaultSettings
 	--local ModSettings = require(script.DefaultSettings.ModifiableSettings)
 	local Directories = script.Directories
 	local NewSettings = require(SettingsScript)
 
-	if not (script.SettingsTableUtils ~= nil and script.SettingsTableUtils:IsA("ModuleScript")) then
-		warn("Failed to override settings: SettingsTableUtils failed to load.")
+	if not (SettingsUtilsModule ~= nil and SettingsUtilsModule:IsA("ModuleScript")) then
+		warn("Failed to override settings: SettingsTableUtils module script not found.")
 		return Settings
 	end
 
-	local SettingsUtils = require(script.SettingsTableUtils)
+	local SettingsUtils = require(SettingsUtilsModule)
 	
 	SettingsUtils.OverwriteTable(NewSettings, Settings)
 
@@ -491,7 +492,7 @@ function Load(Settings: any)
 	require(Context.ServerModules.ExplosionServer).init(Context)
 	require(Context.ServerModules.HitServer).init(Context)
 	require(Context.Modules.Security).init(Context)
-	require(script.CustomPhysicsReplicator).init(Context)
+	require(Context.ServerModules.CustomPhysicsReplicator).init(Context)
 	
 	--script.Parent = game:GetService("ServerScriptService")
 end

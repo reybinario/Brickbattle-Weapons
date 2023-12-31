@@ -7,6 +7,15 @@
       "BrickbattleWeapons": {
         "$path": "src/BrickbattleWeapons"
       }
-    }
+
+      
+    },
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Packages": {
+          "$path": "Packages"
+      }
+    }   
   }
 }

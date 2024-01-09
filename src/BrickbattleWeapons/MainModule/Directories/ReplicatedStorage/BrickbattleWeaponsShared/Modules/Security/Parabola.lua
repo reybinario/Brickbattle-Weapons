@@ -1,3 +1,4 @@
+--!strict
 -- tyzone
 -- Used by Hit and CustomPhysicsReplicator
 

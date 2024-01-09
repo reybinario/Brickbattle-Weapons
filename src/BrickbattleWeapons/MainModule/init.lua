@@ -468,7 +468,7 @@ local function HookUpPlayerEvents(Context)
 	end
 
 	-- Load player modules
-	require(LOAD_PLAYER_SCRIPTS_MODULE_ID)(AddPlayer, RemovePlayer, AddCharacter)
+	local addConn, removeConn, charConns = require(LOAD_PLAYER_SCRIPTS_MODULE_ID)(AddPlayer, RemovePlayer, AddCharacter)
 
 	Context.LoadModule = LoadModule
 	Context.SetUpCharacter = AddCharacter

@@ -135,7 +135,7 @@ function Explosion:HandleHitDetection(Explosion: Part, HitPart, RocketPosition, 
 
         if OriginObject.Value == nil then
             warn("Origin ObjectValue's value not found")
-            retur
+            return
         end
 
         local Origin = OriginObject.Value

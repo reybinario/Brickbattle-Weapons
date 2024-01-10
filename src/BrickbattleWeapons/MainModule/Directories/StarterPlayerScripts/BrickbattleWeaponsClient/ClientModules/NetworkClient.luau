@@ -1,3 +1,4 @@
+--!strict
 --!native
 --!optimize 2
 --!nocheck

@@ -1,6 +1,6 @@
 opt write_checks = true
-opt server_output = "./src/BrickbattleWeapons/MainModule/ServerModules/Networking/NetworkDescription.luau"
-opt client_output = "./src/BrickbattleWeapons/MainModule/Directories/StarterPlayerScripts/BrickBattleWeaponsClient/ClientModules/Networking/NetworkDescription.luau"
+opt server_output = "./src/BrickbattleWeapons/MainModule/ServerModules/Network.luau"
+opt client_output = "./src/BrickbattleWeapons/MainModule/Directories/StarterPlayerScripts/BrickBattleWeaponsClient/ClientModules/Network.luau"
 
 event superballCreate = {
     from: Client,

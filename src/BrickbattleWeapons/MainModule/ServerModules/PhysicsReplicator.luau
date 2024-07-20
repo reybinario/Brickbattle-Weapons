@@ -4,12 +4,12 @@ local PhysicsReplicator = {}
 local NetworkServer = require(script.Parent.NetworkServer)
 local ValidationUtils = require(script.Parent.ValidationUtils)
 
-local createdProjectiles = {"Bomb", "Paintball", "Rocket", "Slingshot", "Superball", "Trowel"}
+local brickBattleObjects = {"Bomb", "Paintball", "Rocket", "Slingshot", "Superball", "Trowel"}
 
 local function replicateCreations(Context)
 
-    for projectile in createdProjectiles do
-        local create = string.lower(projectile) + "Create"
+    for brickBattleObject in brickBattleObjects do
+        local create = string.lower(brickBattleObject) + "Create"
         local replicate = create + "Replicate"
 
         NetworkServer[create].SetCallback(function(player, data)
@@ -17,20 +17,18 @@ local function replicateCreations(Context)
             -- validate position
             -- validate count
     
-            if not ValidationUtils.validateCount(Context, player, data, projectile) then
+            if not ValidationUtils.validateCount(Context, player, data, brickBattleObject) then
                 return
             end
     
-            Context.WeaponData[player.Name][projectile].Count = data.count
+            Context.WeaponData[player.Name][brickBattleObject].Count = data.count
     
-            if not ValidationUtils.validateReloadTime(Context, player, data, projectile) then
+            if not ValidationUtils.validateReloadTime(Context, player, data, brickBattleObject) then
                 return
             end
 
-            Context.WeaponData[player.Name][projectile].LastUsed = time()
-    
-            -- validate position
-    
+            Context.WeaponData[player.Name][brickBattleObject].LastUsed = time()
+        
             NetworkServer[replicate].FireExcept(player, {data.count, player.UserId, data.position})
         end)
     end

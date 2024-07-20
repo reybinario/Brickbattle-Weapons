@@ -435,18 +435,45 @@ local function HookUpPlayerEvents(Context)
 	end
 
 	local function AddPlayer(Player: Player)
-		local emptyTable = {
-			Superballs = 0;
-			Rockets = 0;
-			Pellets = 0;
-			Bombs = 0;
-			Walls = 0;
-			Paintballs = 0;
+		local weaponData = {
+			Superball = {
+				Count = 0,
+				LastUsed = 0,
+				ActiveObjects = {}
+			},
+			Sword = {
+				LastUsed = 0
+			},
+			Slingshot = {
+				Count = 0,
+				LastUsed = 0,
+				ActiveObjects = {}
+			},
+			Bomb = {
+				Count = 0,
+				LastUsed = 0,
+				ActiveObjects = {}
+			},
+			Trowel = {
+				Count = 0,
+				LastUsed = 0,
+				ActiveObjects = {}
+			},
+			Rocket = {
+				Count = 0,
+				LastUsed = 0,
+				ActiveObjects = {}
+			},
+			Paintball = {
+				Count = 0,
+				LastUsed = 0,
+				ActiveObjects = {}
+			},
 		}
-		
+
 		Context.MasterTimeTable[Player.Name] = {}
-		Context.ProjectileCounts[Player.Name] = emptyTable
-		
+		Context.WeaponData[Player.Name] = weaponData
+
 		local Theme = Instance.new("StringValue")
 		Theme.Name = "Theme"
 		Theme.Value = "Normal"

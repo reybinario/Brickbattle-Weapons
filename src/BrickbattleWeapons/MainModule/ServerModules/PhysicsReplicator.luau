@@ -14,8 +14,12 @@ local function replicateCreations(Context)
 
         NetworkServer[create].SetCallback(function(player, data)
             -- validate reload time
-            -- validate position
+            -- validate position (except trowel)
             -- validate count
+            -- validate timestamp (workspace:GetServerTimeFromNow())
+            -- validate character + tool (char must exist and tool should be a descendant of character)
+            -- validate humanoid
+            -- validate forcefield
     
             if not ValidationUtils.validateCount(Context, player, data, brickBattleObject) then
                 return
@@ -27,9 +31,17 @@ local function replicateCreations(Context)
                 return
             end
 
-            Context.WeaponData[player.Name][brickBattleObject].LastUsed = time()
+            Context.WeaponData[player.Name][brickBattleObject].LastUsed = workspace:GetServerTimeNow()
+
+            -- Only rocket sends cframe
+            local positionalDataKey = brickBattleObject == "Rocket" and "cFrame" or "position"
         
-            NetworkServer[replicate].FireExcept(player, {data.count, player.UserId, data.position})
+            -- Trowel walls are not technically extrapolated
+            if brickBattleObject ~= "Trowel" then
+                NetworkServer[replicate].FireExcept(player, {data.count, player.UserId, data[positionalDataKey]})
+            else
+                
+            end
         end)
     end
 end

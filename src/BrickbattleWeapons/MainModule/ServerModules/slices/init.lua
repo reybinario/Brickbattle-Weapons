@@ -10,5 +10,5 @@ export type RootState = {
 type RootActions = State.BrickbattleWeaponStateActions
 
 return Reflex.combineProducers({
-    BrickbattleWeaponState = State.BrickbattleWeaponsStateSlice,
+    BrickbattleWeaponState = State.BrickbattlePlayerStateSlice,
 }) :: RootProducer

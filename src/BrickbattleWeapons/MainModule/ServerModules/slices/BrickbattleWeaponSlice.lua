@@ -12,23 +12,23 @@ type Data = {
     [string]: Table.BrickbattleWeaponTable
 }
 local initialState: Data = {}
-local BrickbattleWeaponsStateSlice = Reflex.createProducer(initialState, {
-    setStatState = function(state, playerName: string, numb: number, stat: string)
+local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
+    setStatState = function(state, playerName: string, weapon: string, weaponCount: number, Amount: number)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
             if playerData == nil then return end
-            playerData[stat] = numb
+            playerData[weapon][weaponCount] = Amount
             return draft
         end)
     end,
-    removeStatState = function(state, playerName: string, stat: string)
+    removeStatState = function(state, playerName: string, weapon: string, weaponCount: number)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
             if playerData == nil then return end
-            playerData[stat] = nil
+            playerData[weapon][weaponCount] = nil
             return draft
         end)
     end
 })
 
-return {BrickbattleWeaponsStateSlice = BrickbattleWeaponsStateSlice}
+return {BrickbattlePlayerStateSlice = BrickbattlePlayerStateSlice}

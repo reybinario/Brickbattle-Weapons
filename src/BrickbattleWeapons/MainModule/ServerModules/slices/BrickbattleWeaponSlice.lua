@@ -2,7 +2,6 @@
 local Reflex = require("Packages/reflex")
 local Immut = require("Packages/immut")
 local Table = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponTables")
-local 
 
 export type BrickbattleWeaponStateActions = {
     setStatState: (playerName: string, numb: number, stat: string) -> (),

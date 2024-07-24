@@ -1,0 +1,5 @@
+run:
+  default: dev
+test:
+  roots:
+    - ReplicatedStorage.Packages.Immut

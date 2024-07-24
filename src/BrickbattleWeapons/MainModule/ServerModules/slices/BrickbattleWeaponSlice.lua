@@ -2,6 +2,7 @@
 local Reflex = require("Packages/reflex")
 local Immut = require("Packages/immut")
 local Table = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponTables")
+local 
 
 export type BrickbattleWeaponStateActions = {
     setStatState: (playerName: string, numb: number, stat: string) -> (),
@@ -13,7 +14,15 @@ type Data = {
 }
 local initialState: Data = {}
 local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
-    setStatState = function(state, playerName: string, weapon: string, weaponCount: number, Amount: number)
+    setPlayerWeaponState = function(state, playerName: string,weapon: string, Data: {})
+		return Immut.produce(state, function(draft) 
+            local playerData = draft[playerName]
+            if playerData == nil then return end
+            playerData[weapon] = Data
+            return draft
+        end)
+    end,
+    setStatWeaponState = function(state, playerName: string, weapon: string, weaponCount: number, Amount: number)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
             if playerData == nil then return end

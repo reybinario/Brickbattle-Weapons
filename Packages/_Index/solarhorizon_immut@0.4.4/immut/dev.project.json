@@ -1,0 +1,17 @@
+{
+  "name": "immut-test",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Packages": {
+        "$path": { "optional": "benchmark/Packages" },
+        "Immut": {
+          "$path": "default.project.json"
+        }
+      }
+    },
+    "ServerStorage": {
+      "$path": { "optional": "benchmark/bench" }
+    }
+  }
+}

@@ -1,10 +1,10 @@
 --!strict
-export type BrickbattleWeaponTable = {
+export type BrickbattlePlayerTable = {
   theme: number, -- we'll use enums
   superballs: {
       [number]: { -- count value (incremented each time weapon is fired by this player)
           position: Vector3, 
-          velocity: any,
+          velocity: Vector3,
           hitCount: number, -- number of times the superball has ricocheted (we will use this calculate damaging halving)
           packetCount: number, -- the number of packets we've received and accepted for this projectile
           timestamp: number
@@ -49,7 +49,7 @@ export type BrickbattleWeaponTable = {
       }
   },
   walls: {
-      [number]: any 
+      [Model]: any 
   }
 }
 

@@ -1,23 +1,23 @@
 --!strict
 local Reflex = require("Packages/reflex")
 local Immut = require("Packages/immut")
-local Table = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponTables")
+local BrickbattleWeaponTables = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponTables")
 
 export type BrickbattleWeaponStateActions = {
     setStatState: (playerName: string, numb: number, stat: string) -> (),
     removeStatState: (playerName: string, stat: string) -> (),
 }
 
-type Data = {
-    [string]: Table.BrickbattlePlayerTable
+type BrickbattlePlayerStateEntry = {
+    [string]: BrickbattleWeaponTables.BrickbattlePlayerTable
 }
-local initialState: Data = {}
+local initialState: BrickbattlePlayerStateEntry = {}
 local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
-    setPlayerWeaponState = function(state, playerName: string,weapon: string, Data: any)
+    setTotalProjectileStateForPlayer = function(state, playerName: string, weapon: string, projectileData: any)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
             if playerData == nil then return end
-            playerData[weapon] = Data
+            playerData[weapon] = projectileData
             return draft
         end)
     end,
@@ -29,11 +29,11 @@ local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
             return draft
         end)
     end,
-    removeStatState = function(state, playerName: string, weapon: string, weaponCount: number)
+    removeSingleProjectileState = function(state, playerName: string, weapon: string, projectileCount: number, newState: any)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
             if playerData == nil then return end
-            playerData[weapon][weaponCount] = nil
+            playerData[weapon][projectileCount] = newState
             return draft
         end)
     end

@@ -49,7 +49,7 @@ export type BrickbattlePlayerTable = {
         }
     },
     walls: {
-        [Model]: any 
+        [number]: Model; 
     }
   }
   

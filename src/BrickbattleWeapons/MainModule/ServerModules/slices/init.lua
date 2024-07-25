@@ -1,14 +1,14 @@
 --!strict
 local Reflex = require("Packages/reflex")
-local Table = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponTables")
-local State = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponSlice")
+local BrickbattleWeaponTables = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponTables")
+local BrickBattleWeaponsState = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponSlice")
 
 export type RootProducer = Reflex.Producer<RootState, RootActions>
 export type RootState = {
-    BrickbattlePlayerState: Table.BrickbattlePlayerTable
+    BrickbattlePlayerState: BrickbattleWeaponTables.BrickbattlePlayerTable
 }
-type RootActions = State.BrickbattleWeaponStateActions
+type RootActions = BrickBattleWeaponsState.BrickbattleWeaponStateActions
 
 return Reflex.combineProducers({
-    BrickbattlePlayerState = State.BrickbattlePlayerStateSlice,
+    BrickbattlePlayerState = BrickBattleWeaponsState.BrickbattlePlayerStateSlice,
 }) :: RootProducer

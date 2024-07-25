@@ -4,8 +4,9 @@ local Immut = require("Packages/immut")
 local BrickbattleWeaponTables = require("src/BrickbattleWeapons/MainModule/ServerModules/slices/BrickbattleWeaponTables")
 
 export type BrickbattleWeaponStateActions = {
-    setStatState: (playerName: string, numb: number, stat: string) -> (),
-    removeStatState: (playerName: string, stat: string) -> (),
+    setTotalProjectileStateForPlayer: (playerName: string, weapon: string, projectileData: any) -> (),
+    setStatWeaponState: (playerName: string, weapon: string, weaponCount: number, Amount: any) -> (),
+    removeSingleProjectileState: (playerName: string, weapon: string, projectileCount: number, newState: any) -> (),
 }
 
 type BrickbattlePlayerStateEntry = {
@@ -16,7 +17,9 @@ local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
     setTotalProjectileStateForPlayer = function(state, playerName: string, weapon: string, projectileData: any)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
-            if playerData == nil then return end
+            if playerData == nil then
+                error("playerData for brickbattle player state is nil")
+            end            
             playerData[weapon] = projectileData
             return draft
         end)
@@ -24,7 +27,9 @@ local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
     setStatWeaponState = function(state, playerName: string, weapon: string, weaponCount: number, Amount: any)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
-            if playerData == nil then return end
+            if playerData == nil then
+                error("playerData for brickbattle player state is nil")
+            end
             playerData[weapon][weaponCount] = Amount
             return draft
         end)
@@ -32,7 +37,9 @@ local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
     removeSingleProjectileState = function(state, playerName: string, weapon: string, projectileCount: number, newState: any)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
-            if playerData == nil then return end
+            if playerData == nil then
+                error("playerData for brickbattle player state is nil")
+            end            
             playerData[weapon][projectileCount] = newState
             return draft
         end)

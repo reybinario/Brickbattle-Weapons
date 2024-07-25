@@ -5,7 +5,7 @@ local BrickbattleWeaponTables = require("src/BrickbattleWeapons/MainModule/Serve
 
 export type BrickbattleWeaponStateActions = {
     setTotalProjectileStateForPlayer: (playerName: string, weapon: string, projectileData: any) -> (),
-    setStatWeaponState: (playerName: string, weapon: string, weaponCount: number, Amount: any) -> (),
+    setSingleProjectileState: (playerName: string, weapon: string, weaponCount: number, newState: any) -> (),
     removeSingleProjectileState: (playerName: string, weapon: string, projectileCount: number, newState: any) -> (),
 }
 
@@ -24,13 +24,13 @@ local BrickbattlePlayerStateSlice = Reflex.createProducer(initialState, {
             return draft
         end)
     end,
-    setStatWeaponState = function(state, playerName: string, weapon: string, weaponCount: number, Amount: any)
+    setSingleProjectileState = function(state, playerName: string, weapon: string, weaponCount: number, newState: any)
 		return Immut.produce(state, function(draft) 
             local playerData = draft[playerName]
             if playerData == nil then
                 error("playerData for brickbattle player state is nil")
             end
-            playerData[weapon][weaponCount] = Amount
+            playerData[weapon][weaponCount] = newState
             return draft
         end)
     end,

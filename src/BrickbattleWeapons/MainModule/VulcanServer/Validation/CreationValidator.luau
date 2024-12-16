@@ -1,11 +1,9 @@
 --!strict
-local BrickbattleStateValidator = {}
+local CreationValidator = {}
 
-function BrickbattleStateValidator.validateReloadTime(Context, player, data, weapon)
+function CreationValidator.validateReloadTime(player, data, weapon)
 
-    local lenientReloadTime = math.max(Context.Settings[weapon].ReloadTime - 1, Context.Settings[weapon].ReloadTime * .6)
-
-    local valid = time() - Context.WeaponData[player.Name][weapon].LastUsed >= lenientReloadTime
+    local valid = true
   
     if not valid then
         print("Player " + player.Name + ", " + data.count + " -- did not wait long enough for " + weapon)
@@ -14,10 +12,10 @@ function BrickbattleStateValidator.validateReloadTime(Context, player, data, wea
     return valid
 end
 
-function BrickbattleStateValidator.validateCount(Context, player: Player, data, weapon)
+function CreationValidator.validateCount(player: Player, data, weapon)
 
     -- data.count should be exactly 1 greater than current count
-    local valid = data.count - Context.WeaponData[player.Name][weapon].Count == 1
+    local valid = true
 
     if not valid then
         print("Player " + player.Name + ", " + data.count + " -- delivered out of order for " + weapon)
@@ -26,7 +24,7 @@ function BrickbattleStateValidator.validateCount(Context, player: Player, data, 
     return valid
 end
 
-function BrickbattleStateValidator.conductSecurityValidations(Context, player: Player, data, weapon)
+function CreationValidator.conductSecurityValidations(player: Player, data, weapon)
     -- TODO:
     -- validate position (except trowel)
     -- validate timestamp (workspace:GetServerTimeFromNow())
@@ -36,4 +34,4 @@ function BrickbattleStateValidator.conductSecurityValidations(Context, player: P
     return true
 end
 
-return BrickbattleStateValidator
+return CreationValidator

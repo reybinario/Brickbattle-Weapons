@@ -5,24 +5,26 @@ local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 local PhysicsService = game:GetService("PhysicsService")
 
-local BrickbattleStateCache = require(script.Parent.Parent.State.BrickbattleStateCache)
-local BrickbattleConfig = require(script.Parent.Parent.Config.BrickbattleConfig)
-local BrickbattleStateReplicator = require(script.Parent.Parent.Network.BrickbattleReplicator)
+local StateCache = require(script.Parent.Parent.State.StateCache)
+local Config = require(script.Parent.Config)
+local ConfigSchema = require(script.Parent.ConfigSchema)
 
-local BrickbattleStartupManager = {}
+local StateReplicator = require(script.Parent.Parent.Network.Replicator)
 
-function BrickbattleStartupManager.start(requestedConfiguration: BrickbattleConfig.BrickbattleConfigWithOptionals, mainModule: ModuleScript)
-	print("Thank you for using Vulcan Brickbattle Weapons. Setting up...")
+local StartupManager = {}
 
-	BrickbattleConfig.processRequestedConfiguration(requestedConfiguration)
+function StartupManager.start(requestedConfiguration: ConfigSchema.ConfigWithOptionals, mainModule: ModuleScript)
+	print("Thank you for using Vulcan  Weapons. Setting up...")
+
+	Config.processRequestedConfiguration(requestedConfiguration)
 	distributeObjects(mainModule)
-	BrickbattleConfig.serveClientConfig(ReplicatedStorage.VulcanShared.Remotes.AcquireConfig)
+	Config.serveClientConfig(ReplicatedStorage.VulcanShared.Remotes.AcquireConfig)
 	connectPlayerEvents()
-	BrickbattleStateCache.serveGlobalBrickbattleState(ReplicatedStorage.VulcanShared.Remotes.AcquireBrickbattleState)
-	BrickbattleStateReplicator.setCallacks()
+	StateCache.serveGlobalState(ReplicatedStorage.VulcanShared.Remotes.AcquireState)
+	StateReplicator.setCallacks()
 	createPhysicsGroups()
 
-	print("Vulcan Brickbattle Weapons setup completed.")
+	print("Vulcan  Weapons setup completed.")
 end
 
 function connectPlayerEvents()
@@ -39,7 +41,7 @@ function connectPlayerEvents()
 
 	local function playerJoined(player: Player)
 		createPlayerProjectileFolders(player)
-		BrickbattleStateCache.createStateForPlayer(player)
+		StateCache.createPlayerState(player)
 	end
 
 	local function playerLeft(player: Player)
@@ -63,7 +65,7 @@ end
 local function createRemoteFunctions(): Folder
 	local remoteFunctions: {string} = {
 		"AcquireConfig",
-		"AcquireBrickbattleState"
+		"AcquireState"
 	}
 
 	local remotesFolder = Instance.new("Folder")
@@ -191,4 +193,4 @@ function createPhysicsGroups()
 end
 
 
-return BrickbattleStartupManager
+return StartupManager

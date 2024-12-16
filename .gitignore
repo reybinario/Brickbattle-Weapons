@@ -8,3 +8,8 @@
 /out/*
 
 /.vscode/*
+
+Packages/
+
+./sourcemap.json
+./wally.lock

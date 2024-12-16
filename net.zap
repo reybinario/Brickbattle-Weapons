@@ -1,6 +1,6 @@
 opt write_checks = true
-opt server_output = "./src/BrickbattleWeapons/MainModule/ServerModules/Network.luau"
-opt client_output = "./src/BrickbattleWeapons/MainModule/Directories/StarterPlayerScripts/BrickBattleWeaponsClient/ClientModules/Network.luau"
+opt server_output = "./src/BrickbattleWeapons/MainModule/VulcanServer/Network/NetworkServer.luau"
+opt client_output = "./src/BrickbattleWeapons/MainModule/VulcanClient/Network/NetworkClient.luau"
 
 event superballCreate = {
     from: Client,
@@ -19,10 +19,9 @@ event superballCreateReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
         velocity: Vector3,
-        color: Vector3,
     },
 }
 event superballUpdate = {
@@ -43,7 +42,7 @@ event superballReplicate = {
     data: struct {
         count: u16,
         packetCount: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
         velocity: Vector3,
     },
@@ -74,7 +73,7 @@ event pelletCreateReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
         velocity: Vector3,
     },
@@ -97,7 +96,7 @@ event pelletReplicate = {
     data: struct {
         count: u16,
         packetCount: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
         velocity: Vector3,
     },
@@ -129,7 +128,7 @@ event paintballCreateReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
         velocity: Vector3,
         color: Vector3,
@@ -153,7 +152,7 @@ event paintballReplicate = {
     data: struct {
         count: u16,
         packetCount: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
         velocity: Vector3,
     },
@@ -174,7 +173,7 @@ event paintballExplodeReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
     },
 }
@@ -194,7 +193,7 @@ event rocketCreateReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         cFrame: CFrame,
     },
 }
@@ -215,7 +214,7 @@ event rocketReplicate = {
     data: struct {
         count: u16,
         packetCount: u16,
-        userId: u32,
+        player: Instance,
         distance: u16,
     },
 }
@@ -226,7 +225,6 @@ event rocketExplode = {
     data: struct {
         count: u16,
         distance: u16,
-        directHitPart: Instance?,
         explodedParts: Instance?[],
     },
 }
@@ -236,7 +234,7 @@ event rocketExplodeReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         distance: u16,
     },
 }
@@ -256,7 +254,7 @@ event bombCreateReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
     },
 }
@@ -279,7 +277,7 @@ event bombReplicate = {
     data: struct {
         count: u16,
         packetCount: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
         velocity: Vector3,
         tickTime: f32,
@@ -301,7 +299,7 @@ event bombExplodeReplicate = {
     call: SingleAsync,
     data: struct {
         count: u16,
-        userId: u32,
+        player: Instance,
         position: Vector3,
     },
 }
@@ -340,16 +338,6 @@ event deleteProjectileReplicate = {
     data: struct {
         projectileType: enum { Superball, Pellet, Paintball, Rocket, Bomb, Wall },
         count: u16,
-        userId: u32,
-    }
-}
-
-event userThemeChanged = {
-    from: Server,
-    type: Reliable,
-    call: SingleAsync,
-    data: struct {
-        userId: u32,
-        theme: string,
+        player: Instance,
     }
 }

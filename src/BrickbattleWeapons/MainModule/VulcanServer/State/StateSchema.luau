@@ -56,8 +56,8 @@ export type BombState = {
     count: number
 }
 export type WallState = Model
-export type BrickbattleState = SuperballState | SlingshotState | PaintballState | RocketState | BombState | WallState
-export type BrickbattlePlayerStateSlice = {
+export type ProjectileState = SuperballState | SlingshotState | PaintballState | RocketState | BombState | WallState
+export type PlayerState = {
     lastUsed: {
         Superball: number,
         Slingshot: number,
@@ -94,7 +94,7 @@ export type BrickbattlePlayerStateSlice = {
         [number]: WallState
     }
 }
-export type GlobalBrickbattleState = {
-    [Player]: BrickbattlePlayerStateSlice
+export type GlobalState = {
+    [Player]: PlayerState
 }
 return {}

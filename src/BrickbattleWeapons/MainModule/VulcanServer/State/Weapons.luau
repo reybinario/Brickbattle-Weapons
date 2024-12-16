@@ -1,7 +1,7 @@
 --!strict
 export type Types = "Bomb" | "Paintball" | "Rocket" | "Slingshot" | "Superball" | "Trowel"
 
-local BrickBattleObjects = {
+local Weapons = {
     Bomb = "Bomb",
     Paintball = "Paintball",
     Rocket = "Rocket",
@@ -10,4 +10,4 @@ local BrickBattleObjects = {
     Trowel = "Trowel"
 }
 
-return BrickBattleObjects
+return Weapons

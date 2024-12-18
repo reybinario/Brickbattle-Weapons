@@ -193,7 +193,7 @@ local config: ConfigSchema.Config = {
 
 local Config = {}
 
-function Config.processRequestedConfiguration(requestedConfig: ConfigWithOptionals)
+function Config.processRequestedConfiguration(requestedConfig: ConfigSchema.ConfigWithOptionals)
     TableUtils.overwriteTable(config, requestedConfig)
     TableUtils.printTable(config)
 end

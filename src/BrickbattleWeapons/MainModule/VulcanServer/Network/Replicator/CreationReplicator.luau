@@ -10,11 +10,11 @@ local StateCache = require(VulcanServer.State.StateCache)
 local Weapons = require(VulcanServer.State.Weapons)
 
 function CreationReplicator.setCallback()
-    for _, brickBattleObject: Weapons.Types in pairs(brickBattleObjects) do
+    for _, brickBattleObject: Weapons.Types in pairs(Weapons) do
         local create: string = string.lower(brickBattleObject) + "Create"
 
         NetworkServer[create].SetCallback(function(player, data)
-            validateAndReplicate(Context, brickBattleObject, player, data)
+            validateAndReplicate(brickBattleObject, player, data)
         end)
     end
 end

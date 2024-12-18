@@ -5,15 +5,27 @@ local AcquireConfig: RemoteFunction = Remotes.AcquireConfig
 local ConfigSchema = require(script.Parent.ConfigSchema)
 
 local ClientConfig = {}
+ClientConfig.__index = ClientConfig
 
-local config: ConfigSchema.Config = {}
-
-function ClientConfig.acquireConfiguration()
-    config = AcquireConfig:InvokeServer()
+function ClientConfig.new()
+	return setmetatable({
+		config = nil;
+		initialized = false;
+	}, ClientConfig)
 end
 
-function ClientConfig.get(): ConfigSchema.Config
-    return config
+function ClientConfig:AcquireConfiguration()
+    print("acquiring")
+    self.config = AcquireConfig:InvokeServer()
+    self.initialized = true
 end
 
-return ClientConfig
+function ClientConfig:Get(): ConfigSchema.Config
+    if self.initialized == false then
+        self:AcquireConfiguration()
+    end
+    return self.config
+end
+
+local singleton = ClientConfig.new()
+return singleton

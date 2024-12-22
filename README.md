@@ -103,6 +103,8 @@ you're using TeamCreate, and click play!
 
 ### 8. Make changes and send your code for review
 
+### 1. Make and save changes
+
 Git uses branches to manage source control. A branch is just a copy of the code that you're working on,
 so the original doesn't get effected. To create a new branch, run the following:
 
@@ -123,15 +125,18 @@ Then, commit your code. Add a good commit message, it should follow the [convent
 git commit -m "feat: add new flamethrower tool"
 ```
 
+### 2. Create a pull request
+
 Lastly, use the [GitHub CLI tool](https://cli.github.com/) to create a request to pull in your code to the repository:
 
 ```zsh
-brew install gh
 gh auth login
 gh pr create
 ```
 
-Note: you may need to set-up a token so you can push to GitHub. 
+Note: you may need to set-up a token so you can push to GitHub.
+
+### 3. Code review and updating a PR
 
 What happens next? Your code will be reviewed my myself (the repository owner). If edits are needed, you'll repeat by the previous process, but will probably use
 
@@ -139,7 +144,13 @@ What happens next? Your code will be reviewed my myself (the repository owner). 
 git commit --amend --no-edit
 ```
 
-instead of a regular commit so you don't add an extra unnecessary commit in our Git history.
+instead of a regular commit so you don't add an extra unnecessary commit in our Git history. And
+
+```zsh
+git push
+```
+
+since you won't need to create another PR, just need to push your changes to your branch that's living in the GitHub repository.
 
 And that's it! You should be ready to code, iterate, and contribute to this package now.
 

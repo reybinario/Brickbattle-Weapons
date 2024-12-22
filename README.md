@@ -98,12 +98,12 @@ Start syncing with Rojo by running the following command in your terminal:
 rojo serve
 ```
 
-and clicking the Roblox Studio Rojo plugin and clicking "connect". Then, make sure your code is committed if
+and clicking the Roblox Studio Rojo plugin and clicking "connect". Then, make sure your code is committed in Roblox Studio if
 you're using TeamCreate, and click play!
 
 ### 8. Make changes and send your code for review
 
-### 1. Make and save changes
+#### 1. Make and save changes
 
 Git uses branches to manage source control. A branch is just a copy of the code that you're working on,
 so the original doesn't get effected. To create a new branch, run the following:
@@ -112,7 +112,11 @@ so the original doesn't get effected. To create a new branch, run the following:
 git checkout -b my_new_branch
 ```
 
-Then, make your code edits, save the files and run the command below to stage them. This just marks them as ready to be operated
+Now you're ready to make your edits. For the purposes of this guide, add your name to the below list in this README.md file:
+
+* reybinario
+
+Save the file and run the command below to stage it. This just marks the file(s) as ready to be operated
 on by Git.
 
 ```zsh
@@ -125,7 +129,7 @@ Then, commit your code. Add a good commit message, it should follow the [convent
 git commit -m "feat: add new flamethrower tool"
 ```
 
-### 2. Create a pull request
+#### 2. Create a pull request
 
 Lastly, use the [GitHub CLI tool](https://cli.github.com/) to create a request to pull in your code to the repository:
 
@@ -136,7 +140,7 @@ gh pr create
 
 Note: you may need to set-up a token so you can push to GitHub.
 
-### 3. Code review and updating a PR
+#### 3. Code review and updating a PR
 
 What happens next? Your code will be reviewed my myself (the repository owner). If edits are needed, you'll repeat by the previous process, but will probably use
 

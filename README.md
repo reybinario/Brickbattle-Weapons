@@ -115,6 +115,7 @@ git checkout -b my_new_branch
 Now you're ready to make your edits. For the purposes of this guide, add your name to the below list in this README.md file:
 
 * reybinario
+* Hecatarch
 
 Save the file and run the command below to stage it. This just marks the file(s) as ready to be operated
 on by Git.

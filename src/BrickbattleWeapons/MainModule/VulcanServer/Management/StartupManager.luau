@@ -13,18 +13,26 @@ local StateReplicator = require(script.Parent.Parent.Network.Replicator)
 
 local StartupManager = {}
 
-function StartupManager.start(requestedConfiguration: ConfigSchema.ConfigWithOptionals, mainModule: ModuleScript)
+type VulcanStructure = ModuleScript & {
+	VulcanClient: Folder,
+	VulcanServer: Folder,
+	VulcanShared: Folder,
+	VulcanDependencyChecker: Folder
+}
+
+function StartupManager.start(requestedConfiguration: ConfigSchema.ConfigWithOptionals)
 	print("Thank you for using Vulcan  Weapons. Setting up...")
+	local mainModule = script.Parent.Parent.Parent :: VulcanStructure
 
 	Config.processRequestedConfiguration(requestedConfiguration)
 	distributeObjects(mainModule)
 	Config.serveClientConfig(ReplicatedStorage.VulcanShared.Remotes.AcquireConfig)
 	connectPlayerEvents()
 	StateCache.serveGlobalState(ReplicatedStorage.VulcanShared.Remotes.AcquireState)
-	StateReplicator.setCallacks()
+	StateReplicator.setCallbacks()
 	createPhysicsGroups()
 
-	print("Vulcan  Weapons setup completed.")
+	print("Vulcan Weapons setup completed.")
 end
 
 function connectPlayerEvents()
@@ -99,7 +107,7 @@ local function createProjectileFolders(): Folder
 	return projectiles
 end
 
-function distributeObjects(mainModule: ModuleScript)
+function distributeObjects(mainModule)
 
 	local remoteFunctionsFolder: Folder = createRemoteFunctions()
 	local projectilesFolder: Folder = createProjectileFolders()

@@ -1,31 +1,23 @@
 --!strict
-local VulcanShared: Folder = game:GetService("ReplicatedStorage").VulcanShared
-local Remotes: Folder = VulcanShared.Remotes
-local AcquireConfig: RemoteFunction = Remotes.AcquireConfig
+local DependencyUtils = require(script.Parent.DependencyUtils)
 local ConfigSchema = require(script.Parent.ConfigSchema)
 
+local AcquireConfig: RemoteFunction = DependencyUtils.getRemotes().AcquireConfig
+
 local ClientConfig = {}
-ClientConfig.__index = ClientConfig
+local config: ConfigSchema.Config
+local initialized = false
 
-function ClientConfig.new()
-	return setmetatable({
-		config = nil;
-		initialized = false;
-	}, ClientConfig)
+function ClientConfig.acquireConfiguration()
+    config = AcquireConfig:InvokeServer()
+    initialized = true
 end
 
-function ClientConfig:AcquireConfiguration()
-    print("acquiring")
-    self.config = AcquireConfig:InvokeServer()
-    self.initialized = true
-end
-
-function ClientConfig:Get(): ConfigSchema.Config
-    if self.initialized == false then
-        self:AcquireConfiguration()
+function ClientConfig.get(): ConfigSchema.Config
+    if not initialized then
+        ClientConfig.acquireConfiguration()
     end
-    return self.config
+    return config
 end
 
-local singleton = ClientConfig.new()
-return singleton
+return ClientConfig

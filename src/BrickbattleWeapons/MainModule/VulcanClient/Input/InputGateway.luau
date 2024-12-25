@@ -6,12 +6,13 @@ local LocalPlayer = Players.LocalPlayer
 
 local VulcanClient = script.Parent.Parent
 local ClientConfig = require(VulcanClient.Management.ClientConfig)
+local ConfigSchema = require(VulcanClient.Management.ConfigSchema)
 local ToolActivator = require(script.Parent.ToolActivator)
 local TargetingManager = require(script.Parent.TargetingManager)
 
 local InputGateway = {}
 
-local clientConfig = ClientConfig:Get()
+local clientConfig: ConfigSchema.Config = ClientConfig.get()
 local lastUsed: {[string]: number} = {}
 
 local toolCache: {[Tool]: string} = {}
@@ -24,12 +25,11 @@ local function hasTool(): boolean
         if tool then
             if toolCache[tool] then return true end
             local vulcanName = tool:GetAttribute(VULCAN_ATTRIBUTE_NAME)
-            if vulcanName then
+            if vulcanName and type(vulcanName) == "string" then
                 toolCache[tool] = vulcanName
             end
             return tool:GetAttribute(VULCAN_ATTRIBUTE_NAME) ~= nil
         end
-        return false
     end
     return false
 end

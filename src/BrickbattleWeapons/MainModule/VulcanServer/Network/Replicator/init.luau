@@ -1,8 +1,8 @@
 --!strict
-local BrickbattleReplicator = {}
+local Replicator = {}
 
-function BrickbattleReplicator.setCallacks()
+function Replicator.setCallbacks()
 
 end
 
-return BrickbattleReplicator
+return Replicator

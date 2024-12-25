@@ -32,8 +32,8 @@ function TableUtils.overwriteTable(target: GenericTable, source: GenericTable, p
 end
 
 -- Retrieves a value from a nested table using a path array
-function TableUtils.getValueFromPathArray(table: GenericTable, pathArray: PathArray, depth: number?): any
-	depth = depth or 1
+function TableUtils.getValueFromPathArray(table: GenericTable, pathArray: PathArray, possibleDepth: number?): any
+	local depth = possibleDepth or 1
 	for key, value in pairs(table) do
 		if key == pathArray[depth] then
 			if typeof(value) == "table" then

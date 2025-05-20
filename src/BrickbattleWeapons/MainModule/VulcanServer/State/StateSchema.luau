@@ -55,8 +55,9 @@ export type BombState = {
     active: boolean,
     count: number
 }
-export type WallState = Model
-export type ProjectileState = SuperballState | SlingshotState | PaintballState | RocketState | BombState | WallState
+export type TrowelState = Model
+
+export type ProjectileState = SuperballState | SlingshotState | PaintballState | RocketState | BombState | TrowelState
 export type PlayerState = {
     lastUsed: {
         Superball: number,
@@ -90,10 +91,20 @@ export type PlayerState = {
     bombs: {
         [number]: BombState
     },
-    walls: {
-        [number]: WallState
+    trowels: {
+        [number]: TrowelState
     }
 }
+export type keyofPlayerState = 
+    "lastUsed"
+    | "counts"
+    | "superballs"
+    | "pellets"
+    | "paintballs"
+    | "rockets"
+    | "bombs"
+    | "trowels"
+   
 export type GlobalState = {
     [Player]: PlayerState
 }

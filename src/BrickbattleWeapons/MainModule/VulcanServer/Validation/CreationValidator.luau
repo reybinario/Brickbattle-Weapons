@@ -1,24 +1,27 @@
 --!strict
+
+local StateSchema = require(script.Parent.Parent.State.StateSchema)
+
 local CreationValidator = {}
 
-function CreationValidator.validateReloadTime(player, data, weapon)
+function CreationValidator.validateReloadTime(player: Player, data: StateSchema.ProjectileState, weapon)
 
     local valid = true
   
     if not valid then
-        print("Player " + player.Name + ", " + data.count + " -- did not wait long enough for " + weapon)
+        print("Player " .. player.Name .. ", " .. data.count .. " -- did not wait long enough for " .. weapon)
     end
 
     return valid
 end
 
-function CreationValidator.validateCount(player: Player, data, weapon)
+function CreationValidator.validateCount(player: Player, data: StateSchema.ProjectileState, weapon)
 
     -- data.count should be exactly 1 greater than current count
     local valid = true
 
     if not valid then
-        print("Player " + player.Name + ", " + data.count + " -- delivered out of order for " + weapon)
+        print("Player " .. player.Name .. ", " .. data.count .. " -- delivered out of order for " .. weapon)
     end
 
     return valid

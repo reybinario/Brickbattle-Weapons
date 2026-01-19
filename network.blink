@@ -1,178 +1,187 @@
-opt write_checks = true
-opt server_output = "./src/BrickbattleWeapons/MainModule/VulcanServer/Network/NetworkServer.luau"
-opt client_output = "./src/BrickbattleWeapons/MainModule/VulcanClient/Network/NetworkClient.luau"
+option ServerOutput = "./src/BrickbattleWeapons/MainModule/VulcanServer/Network/NetworkServer.luau"
+option ClientOutput  = "./src/BrickbattleWeapons/MainModule/VulcanClient/Network/NetworkClient.luau"
 
-event superballCreate = {
-    from: Client,
-    type: Reliable,
-    call: SingleAsync,
-    data: struct {
-        count: u16,
-        position: Vector3,
-        velocity: Vector3,
-        color: Vector3,
-    },
-}
-event superballCreateReplicate = {
-    from: Server,
-    type: Reliable,
-    call: SingleAsync,
-    data: struct {
-        count: u16,
-        player: Instance,
-        position: Vector3,
-        velocity: Vector3,
-    },
-}
-event superballUpdate = {
-    from: Client,
-    type: OrderedUnreliable,
-    call: SingleAsync,
-    data: struct {
-        count: u16,
-        position: Vector3,
-        velocity: Vector3,
-    },
-}
-event superballReplicate = {
-    from: Server,
-    type: OrderedUnreliable,
-    call: SingleAsync,
-    data: struct {
-        count: u16,
-        player: Instance,
-        position: Vector3,
-        velocity: Vector3,
-    },
-}
-event superballHit = {
-    from: Client,
-    type: Reliable,
-    call: SingleAsync,
-    data: struct {
-        count: u16,
-        hitPart: Instance?,
-    },
-}
+type PositionVector3 = vector<i16>
+type VelocityDeltaVector3 = vector<i16>
 
-event pelletCreate = {
+
+event superballCreate {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
-        velocity: Vector3,
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
+        color: Color3,
     },
 }
-event pelletCreateReplicate = {
+event superballCreateReplicate {
     from: Server,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
-        position: Vector3,
-        velocity: Vector3,
+        player: Instance(Player),
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
     },
 }
-event pelletUpdate = {
+event superballUpdate {
     from: Client,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
-        velocity: Vector3,
+        packetCount: u16,
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
     },
 }
-event pelletReplicate = {
+event superballReplicate {
     from: Server,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
-        position: Vector3,
-        velocity: Vector3,
+        packetCount: u16,
+        player: Instance(Player),
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
     },
 }
-event pelletHit = {
+event superballHit {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        hitPart: Instance?,
+        hitPart: Instance(BasePart)?,
     },
 }
 
-event paintballCreate = {
+event pelletCreate {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
-        velocity: Vector3,
-        color: Vector3,
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
     },
 }
-event paintballCreateReplicate = {
+event pelletCreateReplicate {
     from: Server,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
-        position: Vector3,
-        velocity: Vector3,
-        color: Vector3,
+        player: Instance(Player),
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
     },
 }
-event paintballUpdate = {
+event pelletUpdate {
     from: Client,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
-        velocity: Vector3,
+        packetCount: u16,
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
     },
 }
-event paintballReplicate = {
+event pelletReplicate {
     from: Server,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
-        position: Vector3,
-        velocity: Vector3,
+        packetCount: u16,
+        player: Instance(Player),
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
     },
 }
-event paintballHit = {
+event pelletHit {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
-        hitPart: Instance?,
-    },
-}
-event paintballExplodeReplicate = {
-    from: Server,
-    type: Reliable,
-    call: SingleAsync,
-    data: struct {
-        count: u16,
-        player: Instance,
-        position: Vector3,
+        hitPart: Instance(BasePart)?,
     },
 }
 
-event rocketCreate = {
+event paintballCreate {
+    from: Client,
+    type: Reliable,
+    call: SingleAsync,
+    data: struct {
+        count: u16,
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
+        color: Color3,
+    },
+}
+event paintballCreateReplicate {
+    from: Server,
+    type: Reliable,
+    call: SingleAsync,
+    data: struct {
+        count: u16,
+        player: Instance(Player),
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
+        color: Color3,
+    },
+}
+event paintballUpdate {
+    from: Client,
+    type: Unreliable,
+    call: SingleAsync,
+    data: struct {
+        count: u16,
+        packetCount: u16,
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
+    },
+}
+event paintballReplicate {
+    from: Server,
+    type: Unreliable,
+    call: SingleAsync,
+    data: struct {
+        count: u16,
+        packetCount: u16,
+        player: Instance(Player),
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
+    },
+}
+event paintballHit {
+    from: Client,
+    type: Reliable,
+    call: SingleAsync,
+    data: struct {
+        count: u16,
+        position: PositionVector3,
+        hitPart: Instance(BasePart)?,
+    },
+}
+event paintballExplodeReplicate {
+    from: Server,
+    type: Reliable,
+    call: SingleAsync,
+    data: struct {
+        count: u16,
+        player: Instance(Player),
+        position: PositionVector3,
+    },
+}
+
+event rocketCreate {
     from: Client,
     type: Reliable,
     call: SingleAsync,
@@ -181,129 +190,133 @@ event rocketCreate = {
         cFrame: CFrame,
     },
 }
-event rocketCreateReplicate = {
+event rocketCreateReplicate {
     from: Server,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
+        player: Instance(Player),
         cFrame: CFrame,
     },
 }
-event rocketUpdate = {
+event rocketUpdate {
     from: Client,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
+        packetCount: u16,
         distance: u16,
     },
 }
-event rocketReplicate = {
+event rocketReplicate {
     from: Server,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
+        packetCount: u16,
+        player: Instance(Player),
         distance: u16,
     },
 }
-event rocketExplode = {
+event rocketExplode {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
         distance: u16,
-        explodedParts: Instance?[],
+        explodedParts: Instance(BasePart)[]?,
     },
 }
-event rocketExplodeReplicate = {
+event rocketExplodeReplicate {
     from: Server,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
+        player: Instance(Player),
         distance: u16,
     },
 }
 
-event bombCreate = {
+event bombCreate {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
+        position: PositionVector3,
     },
 }
-event bombCreateReplicate = {
+event bombCreateReplicate {
     from: Server,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
-        position: Vector3,
+        player: Instance(Player),
+        position: PositionVector3,
     },
 }
-event bombUpdate = {
+event bombUpdate {
     from: Client,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
-        velocity: Vector3,
+        packetCount: u16,
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
         tickTime: f32,
     },
 }
-event bombReplicate = {
+event bombReplicate {
     from: Server,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
-        position: Vector3,
-        velocity: Vector3,
+        packetCount: u16,
+        player: Instance(Player),
+        position: PositionVector3,
+        velocity: VelocityDeltaVector3,
         tickTime: f32,
     },
 }
-event bombExplode = {
+event bombExplode {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        position: Vector3,
-        explodedParts: Instance?[],
+        position: PositionVector3,
+        explodedParts: Instance(BasePart)[]?,
     },
 }
-event bombExplodeReplicate = {
+event bombExplodeReplicate {
     from: Server,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         count: u16,
-        player: Instance,
-        position: Vector3,
+        player: Instance(Player),
+        position: PositionVector3,
     },
 }
 
-event swordGripUpdate = {
+event swordGripUpdate {
     from: Client,
-    type: OrderedUnreliable,
+    type: Unreliable,
     call: SingleAsync,
     data: struct {
         grip: enum { Out, Up, Down }
     }
 }
 
-event wallCreate = {
+event trowelPlace {
     from: Client,
     type: Reliable,
     call: SingleAsync,
@@ -312,7 +325,7 @@ event wallCreate = {
     }
 }
 
-event deleteProjectile = {
+event deleteProjectile {
     from: Client,
     type: Reliable,
     call: SingleAsync,
@@ -321,13 +334,13 @@ event deleteProjectile = {
         count: u16,
     }
 }
-event deleteProjectileReplicate = {
+event deleteProjectileReplicate {
     from: Server,
     type: Reliable,
     call: SingleAsync,
     data: struct {
         projectileType: enum { Superball, Pellet, Paintball, Rocket, Bomb, Wall },
         count: u16,
-        player: Instance,
+        player: Instance(Player),
     }
 }

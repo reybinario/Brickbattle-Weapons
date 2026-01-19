@@ -11,7 +11,7 @@ local config = Config.get()
 local SuperballCreator = {}
 
 function SuperballCreator.create(player: Player): Part
-	local part: Part = PartCache:GetPart()
+	local part: Part = PartCache:get()
 	part.Name = player.Name.."'s Superball"
 
 	part.Size = config.Superball.PartConfig.Size

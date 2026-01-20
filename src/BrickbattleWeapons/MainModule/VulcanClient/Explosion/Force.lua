@@ -1,4 +1,4 @@
---!strict
+--!nonstrict
 local Force = {}
 local Collections = game:GetService("CollectionService")
 local Debris = game:GetService("Debris")

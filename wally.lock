@@ -5,4 +5,9 @@ registry = "test"
 [[package]]
 name = "diosbinario/brickbattle-weapons"
 version = "0.1.0"
+dependencies = [["trove", "sleitnick/trove@1.8.0"]]
+
+[[package]]
+name = "sleitnick/trove"
+version = "1.8.0"
 dependencies = []

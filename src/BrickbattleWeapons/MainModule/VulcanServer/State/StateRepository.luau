@@ -7,7 +7,8 @@ StateRepository offers state access at 3 levels:
 ]]
 local StateRepository = {}
 
-local StateSchema = require(script.Parent.StateSchema)
+local StateSchema = require(script.Parent.Parent.Parent.VulcanShared.StateSchema)
+local WeaponTypes = require(script.Parent.Parent.Parent.VulcanShared.WeaponTypes)
 
 local cache: StateSchema.GlobalState = {}
 
@@ -77,6 +78,26 @@ end
 
 function StateRepository.deletePlayerState(player: Player)
     cache[player] = nil
+end
+
+-- Update a specific field in a player's weapon state (like lastUsed or counts)
+function StateRepository.updatePlayerProjectileField(player: Player, weaponType: WeaponTypes.WeaponType, fieldName: StateSchema.PlayerStateNumericFields, value: number)
+    local playerState = cache[player]
+    if not playerState then
+        warn("Player state not found for", player.Name)
+        return
+    end
+    playerState[fieldName][weaponType] = value
+end
+
+-- Read a specific field in a player's weapon state
+function StateRepository.readPlayerWeaponField(player: Player, weaponType: WeaponTypes.WeaponType, fieldName: StateSchema.PlayerStateNumericFields): number?
+    local playerState = cache[player]
+    if not playerState then
+        warn("Player state not found for", player.Name)
+        return
+    end
+    return playerState[fieldName][weaponType]
 end
 
 -- Gets the states of every current projectile for all players

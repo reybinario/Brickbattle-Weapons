@@ -47,6 +47,7 @@ function connectPlayerEvents()
 	end
 
 	local function playerLeft(player: Player)
+		StateRepository.deletePlayerState(player)
 		local bufferFolder = workspace.Projectiles.Buffers[player.Name]
 		if bufferFolder then
 			bufferFolder:Destroy()

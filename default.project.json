@@ -6,6 +6,11 @@
       "BrickbattleWeapons": {
         "$path": "src/BrickbattleWeapons"
       }
-    } 
+    },
+    "ReplicatedStorage": {
+      "Packages": {
+        "$path": "Packages"
+      }
+    }
   }
 }

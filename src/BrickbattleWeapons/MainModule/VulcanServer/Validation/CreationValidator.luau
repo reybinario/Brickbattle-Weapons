@@ -1,10 +1,11 @@
 --!strict
 
-local StateSchema = require(script.Parent.Parent.State.StateSchema)
+local VulcanShared = script.Parent.Parent.Parent.VulcanShared
+local StateSchema = require(VulcanShared.StateSchema)
 
 local CreationValidator = {}
 
-function CreationValidator.validateReloadTime(player: Player, data: StateSchema.ProjectileState, weapon)
+function CreationValidator.validateReloadTime(player: Player, data: StateSchema.ProjectileState, weapon: string)
 
     local valid = true
   
@@ -15,7 +16,7 @@ function CreationValidator.validateReloadTime(player: Player, data: StateSchema.
     return valid
 end
 
-function CreationValidator.validateCount(player: Player, data: StateSchema.ProjectileState, weapon)
+function CreationValidator.validateCount(player: Player, data: StateSchema.ProjectileState, weapon: string)
 
     -- data.count should be exactly 1 greater than current count
     local valid = true
@@ -27,7 +28,7 @@ function CreationValidator.validateCount(player: Player, data: StateSchema.Proje
     return valid
 end
 
-function CreationValidator.conductSecurityValidations(player: Player, data, weapon)
+function CreationValidator.conductSecurityValidations(player: Player, data: StateSchema.ProjectileState, weapon: string)
     -- TODO:
     -- validate position (except trowel)
     -- validate timestamp (workspace:GetServerTimeFromNow())

@@ -7,7 +7,8 @@ type VulcanSharedType = Folder & {
         AcquireConfig: RemoteFunction,
         AcquireState: RemoteFunction
     },
-    PartCache: ModuleScript
+    PartCache: ModuleScript,
+    WeaponTypes: ModuleScript
 }
 
 type ProjectilesFolder = Folder & {
@@ -34,6 +35,10 @@ end
 function DependencyUtils.getActiveProjectiles()
     local Projectiles = workspace.Projectiles :: ProjectilesFolder
     return Projectiles.Active
+end
+
+function DependencyUtils.getVulcanShared(): VulcanSharedType
+    return VulcanShared
 end
 
 return DependencyUtils

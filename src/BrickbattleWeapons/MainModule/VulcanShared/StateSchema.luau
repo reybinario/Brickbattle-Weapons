@@ -92,6 +92,7 @@ export type PlayerState = {
         [number]: WallState
     }
 }
+export type PlayerStateNumericFields = "lastUsed" | "counts"
 export type GlobalState = {
     [Player]: PlayerState
 }

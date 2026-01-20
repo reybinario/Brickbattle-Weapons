@@ -1,8 +1,8 @@
-local ObjectCache = {}
-ObjectCache.__index = ObjectCache
+local PartCache = {}
+PartCache.__index = PartCache
 
-function ObjectCache.new(template: BasePart, prewarmAmount: number?, container: Instance?)
-    local self = setmetatable({}, ObjectCache)
+function PartCache.new(template: Part, prewarmAmount: number?, container: Instance?)
+    local self = setmetatable({}, PartCache)
 
     self._template = template
     self._container = container or workspace
@@ -20,18 +20,18 @@ function ObjectCache.new(template: BasePart, prewarmAmount: number?, container: 
     return self
 end
 
-function ObjectCache:_prepare(item: BasePart)
+function PartCache:_prepare(item: Part)
     item.Parent = self._container
 end
 
-function ObjectCache:_flush()
+function PartCache:_flush()
     for _, item in ipairs(self._reusePool) do
         table.insert(self._cache, item)
     end
     table.clear(self._reusePool)
 end
 
-function ObjectCache:get(): BasePart
+function PartCache:get(): Part
     if #self._cache == 0 then
         self:_flush()
     end
@@ -44,11 +44,11 @@ function ObjectCache:get(): BasePart
         item = table.remove(self._cache)
     end
 
-    return item :: BasePart
+    return item :: Part
 end
 
-function ObjectCache:reuse(item: BasePart)
+function PartCache:reuse(item: Part)
     table.insert(self._reusePool, item)
 end
 
-return ObjectCache
+return PartCache

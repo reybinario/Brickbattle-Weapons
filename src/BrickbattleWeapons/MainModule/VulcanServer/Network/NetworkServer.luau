@@ -13,14 +13,14 @@ if RunService:IsClient() then
 end
 
 if not _G.__ZAP then
-	_G.__ZAP = { ["ZAP"] = {} }
-elseif not _G.__ZAP["ZAP"] then
-	_G.__ZAP["ZAP"] = {}
-elseif _G.__ZAP["ZAP"]["ZAP"] ~= nil then
-	error(`There is already an instance of Zap with the same remote_scope of ZAP, remote_folder of ZAP and the version of {_G.__ZAP["ZAP"]["ZAP"]}. Change the remote_scope or remote_folder option of both Zap instances`)
+	_G.__ZAP = { ["VULCAN_BRICKBATTLE_WEAPONS_ZAP"] = {} }
+elseif not _G.__ZAP["VULCAN_BRICKBATTLE_WEAPONS_ZAP"] then
+	_G.__ZAP["VULCAN_BRICKBATTLE_WEAPONS_ZAP"] = {}
+elseif _G.__ZAP["VULCAN_BRICKBATTLE_WEAPONS_ZAP"]["VULCAN_BRICKBATTLE_WEAPONS"] ~= nil then
+	error(`There is already an instance of Zap with the same remote_scope of VULCAN_BRICKBATTLE_WEAPONS, remote_folder of VULCAN_BRICKBATTLE_WEAPONS_ZAP and the version of {_G.__ZAP["VULCAN_BRICKBATTLE_WEAPONS_ZAP"]["VULCAN_BRICKBATTLE_WEAPONS"]}. Change the remote_scope or remote_folder option of both Zap instances`)
 end
 
-_G.__ZAP["ZAP"]["ZAP"] = "0.6.28"
+_G.__ZAP["VULCAN_BRICKBATTLE_WEAPONS_ZAP"]["VULCAN_BRICKBATTLE_WEAPONS"] = "0.6.28"
 
 local outgoing_buff: buffer
 local outgoing_used: number
@@ -289,17 +289,17 @@ if not RunService:IsRunning() then
 	}) :: Events
 end
 
-local remotes = ReplicatedStorage:FindFirstChild("ZAP")
+local remotes = ReplicatedStorage:FindFirstChild("VULCAN_BRICKBATTLE_WEAPONS_ZAP")
 if remotes == nil then
 	remotes = Instance.new("Folder")
-	remotes.Name = "ZAP"
+	remotes.Name = "VULCAN_BRICKBATTLE_WEAPONS_ZAP"
 	remotes.Parent = ReplicatedStorage
 end
 
-local reliable = remotes:FindFirstChild("ZAP_RELIABLE")
+local reliable = remotes:FindFirstChild("VULCAN_BRICKBATTLE_WEAPONS_RELIABLE")
 if reliable == nil then
 	reliable = Instance.new("RemoteEvent")
-	reliable.Name = "ZAP_RELIABLE"
+	reliable.Name = "VULCAN_BRICKBATTLE_WEAPONS_RELIABLE"
 	reliable.Parent = remotes
 end
 
@@ -315,13 +315,13 @@ local function getOrCreateUnreliableRemote(name: string): UnreliableRemoteEvent
 	return remote
 end
 
-local unreliable = { getOrCreateUnreliableRemote("ZAP_UNRELIABLE_0"), getOrCreateUnreliableRemote("ZAP_UNRELIABLE_1"), getOrCreateUnreliableRemote("ZAP_UNRELIABLE_2"), getOrCreateUnreliableRemote("ZAP_UNRELIABLE_3"), getOrCreateUnreliableRemote("ZAP_UNRELIABLE_4"), getOrCreateUnreliableRemote("ZAP_UNRELIABLE_5") }
-assert(unreliable[1]:IsA("UnreliableRemoteEvent"), "Expected ZAP_UNRELIABLE_0 to be an UnreliableRemoteEvent")
-assert(unreliable[2]:IsA("UnreliableRemoteEvent"), "Expected ZAP_UNRELIABLE_1 to be an UnreliableRemoteEvent")
-assert(unreliable[3]:IsA("UnreliableRemoteEvent"), "Expected ZAP_UNRELIABLE_2 to be an UnreliableRemoteEvent")
-assert(unreliable[4]:IsA("UnreliableRemoteEvent"), "Expected ZAP_UNRELIABLE_3 to be an UnreliableRemoteEvent")
-assert(unreliable[5]:IsA("UnreliableRemoteEvent"), "Expected ZAP_UNRELIABLE_4 to be an UnreliableRemoteEvent")
-assert(unreliable[6]:IsA("UnreliableRemoteEvent"), "Expected ZAP_UNRELIABLE_5 to be an UnreliableRemoteEvent")
+local unreliable = { getOrCreateUnreliableRemote("VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_0"), getOrCreateUnreliableRemote("VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_1"), getOrCreateUnreliableRemote("VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_2"), getOrCreateUnreliableRemote("VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_3"), getOrCreateUnreliableRemote("VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_4"), getOrCreateUnreliableRemote("VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_5") }
+assert(unreliable[1]:IsA("UnreliableRemoteEvent"), "Expected VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_0 to be an UnreliableRemoteEvent")
+assert(unreliable[2]:IsA("UnreliableRemoteEvent"), "Expected VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_1 to be an UnreliableRemoteEvent")
+assert(unreliable[3]:IsA("UnreliableRemoteEvent"), "Expected VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_2 to be an UnreliableRemoteEvent")
+assert(unreliable[4]:IsA("UnreliableRemoteEvent"), "Expected VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_3 to be an UnreliableRemoteEvent")
+assert(unreliable[5]:IsA("UnreliableRemoteEvent"), "Expected VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_4 to be an UnreliableRemoteEvent")
+assert(unreliable[6]:IsA("UnreliableRemoteEvent"), "Expected VULCAN_BRICKBATTLE_WEAPONS_UNRELIABLE_5 to be an UnreliableRemoteEvent")
 local player_map = {}
 
 local function load_player(player: Player)
@@ -335,6 +335,218 @@ end
 Players.PlayerRemoving:Connect(function(player)
 	player_map[player] = nil
 end)
+export type pelletCreateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type superballCreateReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type movingProjectileCreateReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type movingProjectileReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type pelletUpdateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type swordGripUpdateData = ({
+	["grip"]: ("Out" | "Up" | "Down"),
+})
+export type deleteProjectileReplicateData = ({
+	["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
+	["count"]: (number),
+	["player"]: (Instance),
+})
+export type positionalReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+})
+export type networkedProjectileType = ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall")
+export type coloredMovingProjectileCreateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+	["color"]: (Vector3),
+})
+export type superballHitData = ({
+	["count"]: (number),
+	["hitPart"]: ((Instance)?),
+})
+export type rocketReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["distance"]: (number),
+})
+export type pelletCreateReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type wallCreateData = ({
+	["count"]: (number),
+	["cFrame"]: (CFrame),
+})
+export type bombCreateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+})
+export type rocketCreateReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["cFrame"]: (CFrame),
+})
+export type superballUpdateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type paintballExplodeReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+})
+export type rocketCreateData = ({
+	["count"]: (number),
+	["cFrame"]: (CFrame),
+})
+export type bombExplodeReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+})
+export type coloredMovingProjectileCreateReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+	["color"]: (Vector3),
+})
+export type bombExplodeData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["explodedParts"]: (({ (Instance) })?),
+})
+export type paintballCreateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+	["color"]: (Vector3),
+})
+export type hitData = ({
+	["count"]: (number),
+	["hitPart"]: ((Instance)?),
+})
+export type superballReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type superballCreateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type paintballHitData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["hitPart"]: ((Instance)?),
+})
+export type rocketExplodeReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["distance"]: (number),
+})
+export type bombUpdateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+	["tickTime"]: (number),
+})
+export type paintballCreateReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+	["color"]: (Vector3),
+})
+export type pelletHitData = ({
+	["count"]: (number),
+	["hitPart"]: ((Instance)?),
+})
+export type bombReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+	["tickTime"]: (number),
+})
+export type paintballReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type positionalHitData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["hitPart"]: ((Instance)?),
+})
+export type movingProjectileUpdateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type deleteProjectileData = ({
+	["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
+	["count"]: (number),
+})
+export type rocketUpdateData = ({
+	["count"]: (number),
+	["distance"]: (number),
+})
+export type rocketExplodeData = ({
+	["count"]: (number),
+	["distance"]: (number),
+	["explodedParts"]: (({ (Instance) })?),
+})
+export type bombCreateReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+})
+export type paintballUpdateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type movingProjectileCreateData = ({
+	["count"]: (number),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
+export type pelletReplicateData = ({
+	["count"]: (number),
+	["player"]: (Instance),
+	["position"]: (Vector3),
+	["velocity"]: (Vector3),
+})
 
 local function SendEvents()
 	for player, outgoing in player_map do
@@ -367,6 +579,7 @@ reliable.OnServerEvent:Connect(function(player, buff, inst)
 		if id == 10 then -- wallCreate
 			local value
 			value = {  }
+			value["count"] = buffer.readu16(incoming_buff, read(2))
 			local pos_1 = Vector3.new(buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)))
 			local axisangle_1 = Vector3.new(buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)))
 			local angle_1 = axisangle_1.Magnitude
@@ -398,27 +611,27 @@ reliable.OnServerEvent:Connect(function(player, buff, inst)
 			value["count"] = buffer.readu16(incoming_buff, read(2))
 			value["position"] = Vector3.new(buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)))
 			value["velocity"] = Vector3.new(buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)))
-			value["color"] = Vector3.new(buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)))
 			if reliable_events[0] then
 				task.spawn(reliable_events[0], player, value)
 			end
 		elseif id == 7 then -- rocketExplode
 			local value
+			local bool_2 = buffer.readu8(incoming_buff, read(1))
 			value = {  }
 			value["count"] = buffer.readu16(incoming_buff, read(2))
 			value["distance"] = buffer.readu16(incoming_buff, read(2))
-			local len_1 = buffer.readu16(incoming_buff, read(2))
-			value["explodedParts"] = table.create(len_1)
-			for i_1 = 1, len_1 do
-				local bool_2 = buffer.readu8(incoming_buff, read(1))
-				local val_1
-				if bit32.btest(bool_2, 0b0000000000000001) then
+			if bit32.btest(bool_2, 0b0000000000000001) then
+				local len_1 = buffer.readu16(incoming_buff, read(2))
+				value["explodedParts"] = table.create(len_1)
+				for i_1 = 1, len_1 do
+					local val_1
 					incoming_ipos = incoming_ipos + 1
 					val_1 = incoming_inst[incoming_ipos]
-				else
-					val_1 = nil
+					assert(val_1 ~= nil, "received instance is nil!")
+					value["explodedParts"][i_1] = val_1
 				end
-				value["explodedParts"][i_1] = val_1
+			else
+				value["explodedParts"] = nil
 			end
 			if reliable_events[7] then
 				task.spawn(reliable_events[7], player, value)
@@ -491,17 +704,17 @@ reliable.OnServerEvent:Connect(function(player, buff, inst)
 			local bool_5 = buffer.readu8(incoming_buff, read(1))
 			value = {  }
 			if bit32.btest(bool_5, 0b0000000000000001) then
-				value["projectileType"] = "Superball"
+				value["projectileType"] = "superball"
 			elseif bit32.btest(bool_5, 0b0000000000000010) then
-				value["projectileType"] = "Pellet"
+				value["projectileType"] = "pellet"
 			elseif bit32.btest(bool_5, 0b0000000000000100) then
-				value["projectileType"] = "Paintball"
+				value["projectileType"] = "paintball"
 			elseif bit32.btest(bool_5, 0b0000000000001000) then
-				value["projectileType"] = "Rocket"
+				value["projectileType"] = "rocket"
 			elseif bit32.btest(bool_5, 0b0000000000010000) then
-				value["projectileType"] = "Bomb"
+				value["projectileType"] = "bomb"
 			elseif bit32.btest(bool_5, 0b0000000000100000) then
-				value["projectileType"] = "Wall"
+				value["projectileType"] = "wall"
 			end
 			value["count"] = buffer.readu16(incoming_buff, read(2))
 			if reliable_events[11] then
@@ -509,21 +722,22 @@ reliable.OnServerEvent:Connect(function(player, buff, inst)
 			end
 		elseif id == 9 then -- bombExplode
 			local value
+			local bool_6 = buffer.readu8(incoming_buff, read(1))
 			value = {  }
 			value["count"] = buffer.readu16(incoming_buff, read(2))
 			value["position"] = Vector3.new(buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)), buffer.readf32(incoming_buff, read(4)))
-			local len_2 = buffer.readu16(incoming_buff, read(2))
-			value["explodedParts"] = table.create(len_2)
-			for i_2 = 1, len_2 do
-				local bool_6 = buffer.readu8(incoming_buff, read(1))
-				local val_2
-				if bit32.btest(bool_6, 0b0000000000000001) then
+			if bit32.btest(bool_6, 0b0000000000000001) then
+				local len_2 = buffer.readu16(incoming_buff, read(2))
+				value["explodedParts"] = table.create(len_2)
+				for i_2 = 1, len_2 do
+					local val_2
 					incoming_ipos = incoming_ipos + 1
 					val_2 = incoming_inst[incoming_ipos]
-				else
-					val_2 = nil
+					assert(val_2 ~= nil, "received instance is nil!")
+					value["explodedParts"][i_2] = val_2
 				end
-				value["explodedParts"][i_2] = val_2
+			else
+				value["explodedParts"] = nil
 			end
 			if reliable_events[9] then
 				task.spawn(reliable_events[9], player, value)
@@ -691,6 +905,7 @@ local returns = {
 	SendEvents = SendEvents,
 	wallCreate = {
 		SetCallback = function(Callback: (Player: Player, Value: ({
+			["count"]: (number),
 			["cFrame"]: (CFrame),
 		})) -> ()): () -> ()
 			reliable_events[10] = Callback
@@ -1081,7 +1296,6 @@ local returns = {
 			["count"]: (number),
 			["position"]: (Vector3),
 			["velocity"]: (Vector3),
-			["color"]: (Vector3),
 		})) -> ()): () -> ()
 			reliable_events[0] = Callback
 			return function()
@@ -1338,7 +1552,7 @@ local returns = {
 		SetCallback = function(Callback: (Player: Player, Value: ({
 			["count"]: (number),
 			["distance"]: (number),
-			["explodedParts"]: ({ ((Instance)?) }),
+			["explodedParts"]: (({ (Instance) })?),
 		})) -> ()): () -> ()
 			reliable_events[7] = Callback
 			return function()
@@ -2448,7 +2662,7 @@ local returns = {
 	},
 	deleteProjectileReplicate = {
 		Fire = function(Player: Player, Value: ({
-			["projectileType"]: ("Superball" | "Pellet" | "Paintball" | "Rocket" | "Bomb" | "Wall"),
+			["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
 			["count"]: (number),
 			["player"]: (Instance),
 		}))
@@ -2457,17 +2671,17 @@ local returns = {
 			buffer.writeu8(outgoing_buff, outgoing_apos, 8)
 			local bool_8 = 0
 			local bool_8_pos_1 = alloc(1)
-			if Value["projectileType"] == "Superball" then
+			if Value["projectileType"] == "superball" then
 				bool_8 = bit32.bor(bool_8, 0b0000000000000001)
-			elseif Value["projectileType"] == "Pellet" then
+			elseif Value["projectileType"] == "pellet" then
 				bool_8 = bit32.bor(bool_8, 0b0000000000000010)
-			elseif Value["projectileType"] == "Paintball" then
+			elseif Value["projectileType"] == "paintball" then
 				bool_8 = bit32.bor(bool_8, 0b0000000000000100)
-			elseif Value["projectileType"] == "Rocket" then
+			elseif Value["projectileType"] == "rocket" then
 				bool_8 = bit32.bor(bool_8, 0b0000000000001000)
-			elseif Value["projectileType"] == "Bomb" then
+			elseif Value["projectileType"] == "bomb" then
 				bool_8 = bit32.bor(bool_8, 0b0000000000010000)
-			elseif Value["projectileType"] == "Wall" then
+			elseif Value["projectileType"] == "wall" then
 				bool_8 = bit32.bor(bool_8, 0b0000000000100000)
 			else
 				error("Invalid enumerator")
@@ -2479,7 +2693,7 @@ local returns = {
 			player_map[Player] = save()
 		end,
 		FireAll = function(Value: ({
-			["projectileType"]: ("Superball" | "Pellet" | "Paintball" | "Rocket" | "Bomb" | "Wall"),
+			["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
 			["count"]: (number),
 			["player"]: (Instance),
 		}))
@@ -2488,17 +2702,17 @@ local returns = {
 			buffer.writeu8(outgoing_buff, outgoing_apos, 8)
 			local bool_9 = 0
 			local bool_9_pos_1 = alloc(1)
-			if Value["projectileType"] == "Superball" then
+			if Value["projectileType"] == "superball" then
 				bool_9 = bit32.bor(bool_9, 0b0000000000000001)
-			elseif Value["projectileType"] == "Pellet" then
+			elseif Value["projectileType"] == "pellet" then
 				bool_9 = bit32.bor(bool_9, 0b0000000000000010)
-			elseif Value["projectileType"] == "Paintball" then
+			elseif Value["projectileType"] == "paintball" then
 				bool_9 = bit32.bor(bool_9, 0b0000000000000100)
-			elseif Value["projectileType"] == "Rocket" then
+			elseif Value["projectileType"] == "rocket" then
 				bool_9 = bit32.bor(bool_9, 0b0000000000001000)
-			elseif Value["projectileType"] == "Bomb" then
+			elseif Value["projectileType"] == "bomb" then
 				bool_9 = bit32.bor(bool_9, 0b0000000000010000)
-			elseif Value["projectileType"] == "Wall" then
+			elseif Value["projectileType"] == "wall" then
 				bool_9 = bit32.bor(bool_9, 0b0000000000100000)
 			else
 				error("Invalid enumerator")
@@ -2517,7 +2731,7 @@ local returns = {
 			end
 		end,
 		FireExcept = function(Except: Player, Value: ({
-			["projectileType"]: ("Superball" | "Pellet" | "Paintball" | "Rocket" | "Bomb" | "Wall"),
+			["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
 			["count"]: (number),
 			["player"]: (Instance),
 		}))
@@ -2526,17 +2740,17 @@ local returns = {
 			buffer.writeu8(outgoing_buff, outgoing_apos, 8)
 			local bool_10 = 0
 			local bool_10_pos_1 = alloc(1)
-			if Value["projectileType"] == "Superball" then
+			if Value["projectileType"] == "superball" then
 				bool_10 = bit32.bor(bool_10, 0b0000000000000001)
-			elseif Value["projectileType"] == "Pellet" then
+			elseif Value["projectileType"] == "pellet" then
 				bool_10 = bit32.bor(bool_10, 0b0000000000000010)
-			elseif Value["projectileType"] == "Paintball" then
+			elseif Value["projectileType"] == "paintball" then
 				bool_10 = bit32.bor(bool_10, 0b0000000000000100)
-			elseif Value["projectileType"] == "Rocket" then
+			elseif Value["projectileType"] == "rocket" then
 				bool_10 = bit32.bor(bool_10, 0b0000000000001000)
-			elseif Value["projectileType"] == "Bomb" then
+			elseif Value["projectileType"] == "bomb" then
 				bool_10 = bit32.bor(bool_10, 0b0000000000010000)
-			elseif Value["projectileType"] == "Wall" then
+			elseif Value["projectileType"] == "wall" then
 				bool_10 = bit32.bor(bool_10, 0b0000000000100000)
 			else
 				error("Invalid enumerator")
@@ -2557,7 +2771,7 @@ local returns = {
 			end
 		end,
 		FireList = function(List: { [unknown]: Player }, Value: ({
-			["projectileType"]: ("Superball" | "Pellet" | "Paintball" | "Rocket" | "Bomb" | "Wall"),
+			["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
 			["count"]: (number),
 			["player"]: (Instance),
 		}))
@@ -2566,17 +2780,17 @@ local returns = {
 			buffer.writeu8(outgoing_buff, outgoing_apos, 8)
 			local bool_11 = 0
 			local bool_11_pos_1 = alloc(1)
-			if Value["projectileType"] == "Superball" then
+			if Value["projectileType"] == "superball" then
 				bool_11 = bit32.bor(bool_11, 0b0000000000000001)
-			elseif Value["projectileType"] == "Pellet" then
+			elseif Value["projectileType"] == "pellet" then
 				bool_11 = bit32.bor(bool_11, 0b0000000000000010)
-			elseif Value["projectileType"] == "Paintball" then
+			elseif Value["projectileType"] == "paintball" then
 				bool_11 = bit32.bor(bool_11, 0b0000000000000100)
-			elseif Value["projectileType"] == "Rocket" then
+			elseif Value["projectileType"] == "rocket" then
 				bool_11 = bit32.bor(bool_11, 0b0000000000001000)
-			elseif Value["projectileType"] == "Bomb" then
+			elseif Value["projectileType"] == "bomb" then
 				bool_11 = bit32.bor(bool_11, 0b0000000000010000)
-			elseif Value["projectileType"] == "Wall" then
+			elseif Value["projectileType"] == "wall" then
 				bool_11 = bit32.bor(bool_11, 0b0000000000100000)
 			else
 				error("Invalid enumerator")
@@ -2595,7 +2809,7 @@ local returns = {
 			end
 		end,
 		FireSet = function(Set: { [Player]: any }, Value: ({
-			["projectileType"]: ("Superball" | "Pellet" | "Paintball" | "Rocket" | "Bomb" | "Wall"),
+			["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
 			["count"]: (number),
 			["player"]: (Instance),
 		}))
@@ -2604,17 +2818,17 @@ local returns = {
 			buffer.writeu8(outgoing_buff, outgoing_apos, 8)
 			local bool_12 = 0
 			local bool_12_pos_1 = alloc(1)
-			if Value["projectileType"] == "Superball" then
+			if Value["projectileType"] == "superball" then
 				bool_12 = bit32.bor(bool_12, 0b0000000000000001)
-			elseif Value["projectileType"] == "Pellet" then
+			elseif Value["projectileType"] == "pellet" then
 				bool_12 = bit32.bor(bool_12, 0b0000000000000010)
-			elseif Value["projectileType"] == "Paintball" then
+			elseif Value["projectileType"] == "paintball" then
 				bool_12 = bit32.bor(bool_12, 0b0000000000000100)
-			elseif Value["projectileType"] == "Rocket" then
+			elseif Value["projectileType"] == "rocket" then
 				bool_12 = bit32.bor(bool_12, 0b0000000000001000)
-			elseif Value["projectileType"] == "Bomb" then
+			elseif Value["projectileType"] == "bomb" then
 				bool_12 = bit32.bor(bool_12, 0b0000000000010000)
-			elseif Value["projectileType"] == "Wall" then
+			elseif Value["projectileType"] == "wall" then
 				bool_12 = bit32.bor(bool_12, 0b0000000000100000)
 			else
 				error("Invalid enumerator")
@@ -2635,7 +2849,7 @@ local returns = {
 	},
 	deleteProjectile = {
 		SetCallback = function(Callback: (Player: Player, Value: ({
-			["projectileType"]: ("Superball" | "Pellet" | "Paintball" | "Rocket" | "Bomb" | "Wall"),
+			["projectileType"]: ("superball" | "pellet" | "paintball" | "rocket" | "bomb" | "wall"),
 			["count"]: (number),
 		})) -> ()): () -> ()
 			reliable_events[11] = Callback
@@ -2985,7 +3199,7 @@ local returns = {
 		SetCallback = function(Callback: (Player: Player, Value: ({
 			["count"]: (number),
 			["position"]: (Vector3),
-			["explodedParts"]: ({ ((Instance)?) }),
+			["explodedParts"]: (({ (Instance) })?),
 		})) -> ()): () -> ()
 			reliable_events[9] = Callback
 			return function()

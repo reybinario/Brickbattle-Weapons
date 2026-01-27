@@ -1,7 +1,7 @@
 --!strict
 
-local VulcanShared = script.Parent.Parent.Parent.VulcanShared
-local StateSchema = require(VulcanShared.StateSchema)
+local VulcanClient = script.Parent.Parent.Parent.VulcanClient.Common
+local StateSchema = require(VulcanClient.StateSchema)
 
 local CreationValidator = {}
 

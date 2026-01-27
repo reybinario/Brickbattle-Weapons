@@ -17,13 +17,17 @@ local StartupManager = {}
 function StartupManager.start(requestedConfiguration: ConfigSchema.ConfigWithOptionals)
 	print("Thank you for using Vulcan  Weapons. Setting up...")
 	local mainModule = script.Parent.Parent.Parent
+	local VulcanShared = createSharedFolder()
+	local remoteFunctionsFolder = createRemoteFunctions()
+	remoteFunctionsFolder.Parent = VulcanShared
 
+	-- We now deliberately initialize all server modules before distributing objects.
 	Config.processRequestedConfiguration(requestedConfiguration)
-	distributeObjects(mainModule)
-	Config.serveClientConfig(ReplicatedStorage.VulcanShared.Remotes.AcquireConfig)
+	Config.serveClientConfig(ReplicatedStorage:WaitForChild("VulcanShared").Remotes.AcquireConfig)
 	connectPlayerEvents()
-	StateRepository.serveGlobalState(ReplicatedStorage.VulcanShared.Remotes.AcquireState)
+	StateRepository.serveGlobalState(ReplicatedStorage:WaitForChild("VulcanShared").Remotes.AcquireState)
 	StateReplicator.setCallbacks()
+	distributeObjects(mainModule)
 	createPhysicsGroups()
 
 	print("Vulcan Weapons setup completed.")
@@ -65,7 +69,14 @@ function connectPlayerEvents()
 	Players.PlayerRemoving:Connect(playerLeft)
 end
 
-local function createRemoteFunctions(): Folder
+function createSharedFolder(): Folder
+	local VulcanShared = Instance.new("Folder")
+	VulcanShared.Name = "VulcanShared"
+	VulcanShared.Parent = ReplicatedStorage
+	return VulcanShared
+end
+
+function createRemoteFunctions(): Folder
 	local remoteFunctions: {string} = {
 		"AcquireConfig",
 		"AcquireState"
@@ -112,16 +123,11 @@ local function checkAndParent(obj: string, oldDirectory: Instance, newDirectory:
 end
 
 function distributeObjects(mainModule: ModuleScript)
-
-	local remoteFunctionsFolder: Folder = createRemoteFunctions()
 	local projectilesFolder: Folder = createProjectileFolders()
-
 	checkAndParent("VulcanDependencyChecker", mainModule, StarterGui)
 	checkAndParent("VulcanClient", mainModule, game:GetService("StarterPlayer").StarterPlayerScripts)
-	checkAndParent("VulcanShared", mainModule, ReplicatedStorage)
 	checkAndParent("VulcanServer", mainModule, ServerScriptService)
 	mainModule.Parent = ServerScriptService.VulcanServer
-	remoteFunctionsFolder.Parent = ReplicatedStorage.VulcanShared
 	projectilesFolder.Parent = workspace
 
 	-- Distribute checker script to ensure players have mandatory client scripts,

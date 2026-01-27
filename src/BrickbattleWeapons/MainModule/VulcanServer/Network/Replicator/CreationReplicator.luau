@@ -3,13 +3,13 @@ local CreationReplicator = {}
 
 local Network = script.Parent.Parent
 local VulcanServer = Network.Parent
-local VulcanShared = VulcanServer.Parent.VulcanShared
+local Common = VulcanServer.Parent.VulcanClient.Common
 
 local NetworkStateMapper = require(VulcanServer.State.NetworkStateMapper)
 local NetworkServer = require(Network.NetworkServer)
 local CreationValidator = require(VulcanServer.Validation.CreationValidator)
 local StateRepository = require(VulcanServer.State.StateRepository)
-local WeaponTypes = require(VulcanShared.WeaponTypes)
+local WeaponTypes = require(Common.WeaponTypes)
 
 
 local weaponSpecificNetworkFields = {

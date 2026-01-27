@@ -1,7 +1,7 @@
 opt write_checks = true
 opt server_output = "./src/BrickbattleWeapons/MainModule/VulcanServer/Network/NetworkServer.luau"
 opt client_output = "./src/BrickbattleWeapons/MainModule/VulcanClient/Network/NetworkClient.luau"
-opt types_output = "./src/BrickbattleWeapons/MainModule/VulcanShared/NetworkTypes.luau"
+opt types_output = "./src/BrickbattleWeapons/MainModule/VulcanClient/Common/NetworkTypes.luau"
 opt remote_scope = "VULCAN_BRICKBATTLE_WEAPONS"
 opt remote_folder = "VULCAN_BRICKBATTLE_WEAPONS_ZAP"
 

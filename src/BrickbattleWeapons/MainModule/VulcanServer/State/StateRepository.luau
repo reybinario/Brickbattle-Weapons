@@ -7,8 +7,9 @@ StateRepository offers state access at 3 levels:
 ]]
 local StateRepository = {}
 
-local StateSchema = require(script.Parent.Parent.Parent.VulcanShared.StateSchema)
-local WeaponTypes = require(script.Parent.Parent.Parent.VulcanShared.WeaponTypes)
+local Common = script.Parent.Parent.Parent.VulcanClient.Common
+local StateSchema = require(Common.StateSchema)
+local WeaponTypes = require(Common.WeaponTypes)
 
 local cache: StateSchema.GlobalState = {}
 

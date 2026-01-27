@@ -2,7 +2,7 @@
 local DependencyUtils = require(script.Parent.DependencyUtils)
 local ConfigSchema = require(script.Parent.ConfigSchema)
 
-local AcquireConfig: RemoteFunction = DependencyUtils.getRemotes().AcquireConfig
+local AcquireConfig = DependencyUtils.getRemotes().AcquireConfig
 
 local ClientConfig = {}
 local config: ConfigSchema.Config

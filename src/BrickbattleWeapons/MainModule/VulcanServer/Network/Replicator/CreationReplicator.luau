@@ -1,84 +1,72 @@
 --!strict
 local CreationReplicator = {}
 
-local Network: Folder = script.Parent.Parent
-local VulcanServer: Folder = Network.Parent
+local Network = script.Parent.Parent
+local VulcanServer = Network.Parent
+local VulcanShared = VulcanServer.Parent.VulcanShared
 
+local NetworkStateMapper = require(VulcanServer.State.NetworkStateMapper)
 local NetworkServer = require(Network.NetworkServer)
 local CreationValidator = require(VulcanServer.Validation.CreationValidator)
-local StateCache = require(VulcanServer.State.StateCache)
-local Weapons = require(VulcanServer.State.Weapons)
+local StateRepository = require(VulcanServer.State.StateRepository)
+local WeaponTypes = require(VulcanShared.WeaponTypes)
+
+
+local weaponSpecificNetworkFields = {
+    superball = {"position", "velocity"},
+    rocket = {"cFrame"},
+    bomb = {"position"},
+    paintball = {"position", "velocity", "color"},
+    pellet = {"position", "velocity"},
+    wall = {"cFrame"},
+}
 
 function CreationReplicator.setCallback()
-    for _, brickBattleObject: Weapons.Types in pairs(Weapons) do
-        local create: string = string.lower(brickBattleObject) + "Create"
-
+    print("setting creation callbacks")
+    for _, brickBattleObject: WeaponTypes.ProjectileType in pairs(WeaponTypes.Projectile) do
+        local create = string.lower(brickBattleObject) .. "Create"
+        print("setting callback for:", create)
+        print(NetworkServer)
         NetworkServer[create].SetCallback(function(player, data)
             validateAndReplicate(brickBattleObject, player, data)
         end)
     end
 end
 
-function CreationReplicator.replicateCreatedProjectile(weapon: Weapons.Types, player: Player, data)
-    if weapon == Weapons.Bomb then
-        NetworkServer.bombCreateReplicate.FireExcept(player, {
-            count = data.count,
-            userId = player.UserId,
-            position = data.position
-        })
-    elseif weapon == Weapons.Rocket then
-        NetworkServer.rocketCreateReplicate.FireExcept(player, {
-            count = data.count,
-            userId = player.UserId,
-            cFrame = data.cFrame
-        })
-    elseif weapon == Weapons.Superball then
-        NetworkServer.superballCreateReplicate.FireExcept(player, {
-            count = data.count,
-            userId = player.UserId,
-            position = data.position,
-            velocity = data.velocity
-        })
-    elseif weapon == Weapons.Paintball then
-        NetworkServer.paintballCreateReplicate.FireExcept(player, {
-            count = data.count,
-            userId = player.UserId,
-            position = data.position,
-            velocity = data.velocity
-        })
-    elseif weapon == Weapons.Slingshot then
-        NetworkServer.pelletCreateReplicate.FireExcept(player, {
-            count = data.count,
-            userId = player.UserId,
-            position = data.position,
-            velocity = data.velocity
-        })
-    elseif weapon == Weapons.Trowel then
-        -- TODO: trowel case?
-    else
-        -- TODO: default case
+function CreationReplicator.replicateCreatedProjectile(projectile: WeaponTypes.ProjectileType, player: Player, data)
+    print("replicating created projectile:", projectile, "for player:", player.Name)
+    local replicateEvent = NetworkServer[projectile .. "CreateReplicate"]
+    if not replicateEvent then error("No event for "..projectile) end
+    local payload = {player = player, count = data.count}
+    for _, key in ipairs(weaponSpecificNetworkFields[projectile]) do
+        payload[key] = data[key]
     end
+
+    replicateEvent.FireExcept(player, payload)
 end
 
-function validateAndReplicate(weapon: Weapons.Types, player: Player, data)
-    if not CreationValidator.validateCount(player, data, weapon) then
+function validateAndReplicate(projectile: WeaponTypes.ProjectileType, player: Player, data)
+    local weapon: WeaponTypes.WeaponType = WeaponTypes.fromProjectileToWeapon(projectile)
+    local requestedInitialState = NetworkStateMapper.toProjectileState(projectile, data)
+    if not CreationValidator.validateCount(player, requestedInitialState, weapon) then
         return
     end
 
-    StateCache.updateStateForPlayer(player, weapon, "count", data.count)
+    StateRepository.updatePlayerProjectileField(player, weapon, "counts", data.count)
 
-    if not CreationValidator.validateReloadTime(player, data, weapon) then
+    if not CreationValidator.validateReloadTime(player, requestedInitialState, weapon) then
         return
     end
 
-    StateCache.updateStateForPlayer(player, weapon, "lastUsed", workspace:GetServerTimeNow())
+    StateRepository.updatePlayerProjectileField(player, weapon, "lastUsed", workspace:GetServerTimeNow())
 
-    if not CreationValidator.conductSecurityValidations(player, data, weapon) then
+    if not CreationValidator.conductSecurityValidations(player, requestedInitialState, weapon) then
         return
     end
 
-    StateCache.createBrickbattleState(weapon, player, data)
-    CreationReplicator.replicateCreatedProjectile(weapon, player, data)
+    StateRepository.createProjectileState(player, weapon, requestedInitialState)
+
+    CreationReplicator.replicateCreatedProjectile(projectile, player, data)
 end
 
 return CreationReplicator

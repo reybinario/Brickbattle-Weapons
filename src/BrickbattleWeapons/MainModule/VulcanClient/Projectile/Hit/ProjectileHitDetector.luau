@@ -1,5 +1,4 @@
 --!strict
---!strict
 -- GloriedRage, GFink, tyzone
 -- Used in Superball, Paintball Gun, and Slingshot client modules.
 
@@ -30,9 +29,8 @@ end
 --[[
 	This function handles the hit detection for both the Superball and Slingshot.
 	Incorporates hit detection, damage and indicators all on the client to maximize
-	experience. 
+	experience.
 ]]
-
 function HitModule:HandleHitDetection(Context, projectile)
 	--print("__________")
 	--print("Initializing:", PhysicsFolder.UniqueID.Value)

@@ -6,10 +6,13 @@ local Players = game:GetService("Players")
 local VulcanClient = script.Parent.Parent
 local SuperballCreator = require(VulcanClient.Projectile.ProjectileCreator.SuperballCreator)
 local Config = require(VulcanClient.Management.ClientConfig)
+local NetworkClient = require(script.Parent.Parent.Network.NetworkClient)
 
 local config = Config.get()
 
 local ToolActivator = {}
+
+local sbs = 0 
 
 function ToolActivator.fireSuperball(hit: BasePart?, endPosition: Vector3)
     local superball = SuperballCreator.create(Players.LocalPlayer)
@@ -22,6 +25,14 @@ function ToolActivator.fireSuperball(hit: BasePart?, endPosition: Vector3)
 	superball.CFrame = launchCframe
 	superball.AssemblyLinearVelocity = velocity
 	superball.Parent = workspace
+
+    NetworkClient.superballCreate.Fire({
+        color = Vector3.new(superball.Color.R, superball.Color.G, superball.Color.B),
+        count = sbs,
+        position = superball.Position,
+        velocity = superball.AssemblyLinearVelocity,
+    })
+    sbs = sbs + 1
 
     -- TODO:
     -- tell client projectile registry that we created and fired a superball

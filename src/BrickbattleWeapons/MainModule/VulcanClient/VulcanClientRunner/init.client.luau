@@ -4,9 +4,10 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 local ClientConfig = require(script.Parent.Management.ClientConfig)
-local ComboManager = require(script.Parent.Input.ComboManager)
+local ComboManager = require(script.Parent.Input.ComboUtils)
 local InputGateway = require(script.Parent.Input.InputGateway)
-local TargetingManager = require(script.Parent.Input.TargetingManager)
+local TargetingManager = require(script.Parent.Input.TargetResolver)
+local Receiver = require(script.Parent.Network.Receiver)
 
 function start()
     print("Thank you for using Vulcan Brickbattle Weapons. Setting up client...")
@@ -14,6 +15,8 @@ function start()
     ComboManager.setupLocalCharacterCollisionGroups(LocalPlayer)
     addTargetingRules()
     InputGateway.listenForInput()
+    Receiver.setCallbacks()
+    print("Vulcan Brickbattle Weapons client setup completed.")
 end
 
 function addTargetingRules()

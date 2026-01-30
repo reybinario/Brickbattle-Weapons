@@ -13,11 +13,11 @@ local WorldAppliers: {
 local Applier = {}
 
 function Applier.get(projectile: WeaponTypes.ProjectileType)
-    local strategy = WorldAppliers[projectile]
-    if not strategy then
+    local applier = WorldAppliers[projectile]
+    if not applier then
         error(("No client creation strategy for projectile '%s'"):format(projectile))
     end
-    return strategy
+    return applier
 end
 
 return Applier

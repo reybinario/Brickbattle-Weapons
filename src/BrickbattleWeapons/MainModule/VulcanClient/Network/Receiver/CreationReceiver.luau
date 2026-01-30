@@ -9,11 +9,11 @@ local WeaponTypes = require(Common.WeaponTypes)
 local CreationReceiver = {}
 
 local function handleCreate(projectile: WeaponTypes.ProjectileType, data)
-    local strategy = Applier.get(projectile)
+    local applier = Applier.get(projectile)
 
-    local instance = strategy.create(data)
-    strategy.applyInitialState(instance, data)
-    instance.Parent = strategy.getParent(data)
+    local instance = applier.create(data)
+    applier.applyInitialState(instance, data)
+    instance.Parent = applier.getParent(data)
 end
 
 function CreationReceiver.setCallback()

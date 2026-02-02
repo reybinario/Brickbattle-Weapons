@@ -1,36 +1,29 @@
 --!strict
 
-local DependencyUtils = require(script.Parent.Parent.Parent.Management.DependencyUtils)
 local NetworkClient = require(script.Parent.Parent.NetworkClient)
+local Applier = require(script.Parent.Applier)
 
-local VulcanShared = DependencyUtils.getVulcanShared()
-local WeaponTypes = require(VulcanShared.WeaponTypes)
+local Common = script.Parent.Parent.Parent.Common
+local WeaponTypes = require(Common.WeaponTypes)
 
 local CreationReceiver = {}
 
-local SuperballCreator = require(script.Parent.Parent.Parent.Projectile.ProjectileCreator.SuperballCreator)
+local function handleCreate(projectile: WeaponTypes.ProjectileType, data)
+    local applier = Applier.get(projectile)
 
-function fire(brickBattleObject, data)
-    print("firing creation receiver for:", brickBattleObject)
-    if brickBattleObject == "superball" then
-        local part: Part = SuperballCreator.create(data.player)
-        part.Position = data.position
-        part.AssemblyLinearVelocity = data.velocity
-        part.Parent = workspace.Projectiles.Buffers[data.player.Name]
-    end
+    local instance = applier.create(data)
+    applier.applyInitialState(instance, data)
+    instance.Parent = applier.getParent(data)
 end
 
 function CreationReceiver.setCallback()
-    for _, brickBattleObject: WeaponTypes.ProjectileType in pairs(WeaponTypes.Projectile) do
-        if brickBattleObject == "wall" then
-            continue
-        end
-        local create: string = string.lower(brickBattleObject) .. "CreateReplicate"
-        print("setting receiver callback for:", create)
-        NetworkClient[create].SetCallback(function(data)
-            fire(brickBattleObject, data)
-        end)
+    for _, projectile: WeaponTypes.ProjectileType in pairs(WeaponTypes.Projectile) do
+        if projectile == "wall" then continue end
 
+        local eventName = projectile .. "CreateReplicate"
+        NetworkClient[eventName].SetCallback(function(data)
+            handleCreate(projectile, data)
+        end)
     end
 end
 

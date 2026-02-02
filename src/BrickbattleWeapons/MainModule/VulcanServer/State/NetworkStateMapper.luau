@@ -1,10 +1,10 @@
 --!strict
 local NetworkStateMapper = {}
 
-local VulcanShared = script.Parent.Parent.Parent.VulcanShared
-local StateSchema = require(VulcanShared.StateSchema)
-local NetworkTypes = require(script.Parent.Parent.Parent.VulcanShared.NetworkTypes)
-local WeaponTypes = require(VulcanShared.WeaponTypes)
+local Common = script.Parent.Parent.Parent.VulcanClient.Common
+local StateSchema = require(Common.StateSchema)
+local NetworkTypes = require(Common.NetworkTypes)
+local WeaponTypes = require(Common.WeaponTypes)
 
 -- Private logic helper
 local function getBase(count: number)

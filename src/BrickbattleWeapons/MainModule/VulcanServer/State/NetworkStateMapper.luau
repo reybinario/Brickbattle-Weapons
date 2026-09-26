@@ -3,7 +3,13 @@ local NetworkStateMapper = {}
 
 local Common = script.Parent.Parent.Parent.VulcanClient.Common
 local StateSchema = require(Common.StateSchema)
-local NetworkTypes = require(Common.NetworkTypes)
+-- Blink generates event methods in the client/server modules, not standalone payload types.
+-- Keep the state mapper's input shapes local to avoid importing client runtime code on the server.
+type MovingCreateData = { count: number, position: Vector3, velocity: Vector3 }
+type PaintballCreateData = MovingCreateData & { color: Color3 }
+type RocketCreateData = { count: number, cFrame: CFrame }
+type BombCreateData = { count: number, position: Vector3 }
+type WallCreateData = { count: number, cFrame: CFrame }
 local WeaponTypes = require(Common.WeaponTypes)
 
 -- Private logic helper
@@ -18,7 +24,7 @@ local function getBase(count: number)
 end
 
 local Mappers = {
-	superball = function(data: NetworkTypes.movingProjectileCreateData): StateSchema.SuperballState
+	superball = function(data: MovingCreateData): StateSchema.SuperballState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -32,7 +38,7 @@ local Mappers = {
 		}
 	end,
 
-	pellet = function(data: NetworkTypes.movingProjectileCreateData): StateSchema.SlingshotState
+	pellet = function(data: MovingCreateData): StateSchema.SlingshotState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -46,21 +52,21 @@ local Mappers = {
 		}
 	end,
 
-    paintball = function(data: NetworkTypes.paintballCreateData): StateSchema.PaintballState
-        local base = getBase(data.count)
-        return {
-            count = base.count,
-            timestamp = base.timestamp,
-            originTimestamp = base.originTimestamp,
-            active = base.active,
-            position = data.position,
-            velocity = data.velocity,
-            originPosition = data.position,
-            hasHit = false,
-        }
-    end,
+	paintball = function(data: PaintballCreateData): StateSchema.PaintballState
+		local base = getBase(data.count)
+		return {
+			count = base.count,
+			timestamp = base.timestamp,
+			originTimestamp = base.originTimestamp,
+			active = base.active,
+			position = data.position,
+			velocity = data.velocity,
+			originPosition = data.position,
+			hasHit = false,
+		}
+	end,
 
-	rocket = function(data: NetworkTypes.rocketCreateData): StateSchema.RocketState
+	rocket = function(data: RocketCreateData): StateSchema.RocketState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -74,7 +80,7 @@ local Mappers = {
 		}
 	end,
 
-	bomb = function(data: NetworkTypes.bombCreateData): StateSchema.BombState
+	bomb = function(data: BombCreateData): StateSchema.BombState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -89,8 +95,8 @@ local Mappers = {
 		}
 	end,
 
-	wall = function(data: NetworkTypes.wallCreateData): StateSchema.WallState
-        -- TODO: better reconcile wall network data with internal state
+	wall = function(data: WallCreateData): StateSchema.WallState
+		-- TODO: better reconcile wall network data with internal state
 		return {
 			count = data.count,
 			model = Instance.new("Model"),
@@ -98,19 +104,23 @@ local Mappers = {
 	end,
 }
 
-type creationType = NetworkTypes.bombCreateData | NetworkTypes.rocketCreateData | NetworkTypes.movingProjectileCreateData | NetworkTypes.wallCreateData | NetworkTypes.paintballCreateData
+type creationType = BombCreateData | RocketCreateData | MovingCreateData | WallCreateData | PaintballCreateData
 function NetworkStateMapper.toProjectileState(
-    projectile: WeaponTypes.ProjectileType,
-    networkData: creationType
+	projectile: WeaponTypes.ProjectileType,
+	networkData: creationType
 ): StateSchema.ProjectileState
+	local mapper = Mappers[projectile]
 
-    local mapper = Mappers[projectile]
+	if not mapper then
+		error(
+			string.format(
+				"NetworkStateMapper: No mapping strategy found for projectile type '%s'",
+				tostring(projectile)
+			)
+		)
+	end
 
-    if not mapper then
-        error(string.format("NetworkStateMapper: No mapping strategy found for projectile type '%s'", tostring(projectile)))
-    end
-
-    return mapper(networkData)
+	return mapper(networkData)
 end
 
 return NetworkStateMapper

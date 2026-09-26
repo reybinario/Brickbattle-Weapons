@@ -3,8 +3,7 @@ local NetworkStateMapper = {}
 
 local Common = script.Parent.Parent.Parent.VulcanClient.Common
 local StateSchema = require(Common.StateSchema)
--- Blink generates event methods in the client/server modules, not standalone payload types.
--- Keep the state mapper's input shapes local to avoid importing client runtime code on the server.
+-- Blink generates event methods, not standalone payload types.
 type MovingCreateData = { count: number, position: Vector3, velocity: Vector3 }
 type PaintballCreateData = MovingCreateData & { color: Color3 }
 type RocketCreateData = { count: number, cFrame: CFrame }
@@ -52,19 +51,19 @@ local Mappers = {
 		}
 	end,
 
-	paintball = function(data: PaintballCreateData): StateSchema.PaintballState
-		local base = getBase(data.count)
-		return {
-			count = base.count,
-			timestamp = base.timestamp,
-			originTimestamp = base.originTimestamp,
-			active = base.active,
-			position = data.position,
-			velocity = data.velocity,
-			originPosition = data.position,
-			hasHit = false,
-		}
-	end,
+    paintball = function(data: PaintballCreateData): StateSchema.PaintballState
+        local base = getBase(data.count)
+        return {
+            count = base.count,
+            timestamp = base.timestamp,
+            originTimestamp = base.originTimestamp,
+            active = base.active,
+            position = data.position,
+            velocity = data.velocity,
+            originPosition = data.position,
+            hasHit = false,
+        }
+    end,
 
 	rocket = function(data: RocketCreateData): StateSchema.RocketState
 		local base = getBase(data.count)
@@ -96,7 +95,7 @@ local Mappers = {
 	end,
 
 	wall = function(data: WallCreateData): StateSchema.WallState
-		-- TODO: better reconcile wall network data with internal state
+        -- TODO: better reconcile wall network data with internal state
 		return {
 			count = data.count,
 			model = Instance.new("Model"),
@@ -106,21 +105,17 @@ local Mappers = {
 
 type creationType = BombCreateData | RocketCreateData | MovingCreateData | WallCreateData | PaintballCreateData
 function NetworkStateMapper.toProjectileState(
-	projectile: WeaponTypes.ProjectileType,
-	networkData: creationType
+    projectile: WeaponTypes.ProjectileType,
+    networkData: creationType
 ): StateSchema.ProjectileState
-	local mapper = Mappers[projectile]
 
-	if not mapper then
-		error(
-			string.format(
-				"NetworkStateMapper: No mapping strategy found for projectile type '%s'",
-				tostring(projectile)
-			)
-		)
-	end
+    local mapper = Mappers[projectile]
 
-	return mapper(networkData)
+    if not mapper then
+        error(string.format("NetworkStateMapper: No mapping strategy found for projectile type '%s'", tostring(projectile)))
+    end
+
+    return mapper(networkData)
 end
 
 return NetworkStateMapper

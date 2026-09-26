@@ -25,9 +25,9 @@ Git is mostly used as a CLI, or command-line interface. With CLI's, you enter co
 * Have Mac/Linux and don't understand Linux-based command line interfaces (CLIs)? Follow [this](https://ryanstutorials.net/linuxtutorial/).
 * Have Windows? Follow [this](https://www.tutorialspoint.com/powershell/index.htm) to understand basic PowerShell commands and usage.
 
-### 3. Install Aftman
+### 3. Install Aftman and Rokit
 
-[Aftman](https://github.com/LPGhatguy/aftman?tab=readme-ov-file#installation) is used for tool management.
+[Aftman](https://github.com/LPGhatguy/aftman?tab=readme-ov-file#installation) manages Wally, Rojo, and wally-package-types. [Rokit](https://github.com/rojo-rbx/rokit) manages Blink. Install both.
 
 ### 4. Download the code
 
@@ -51,18 +51,19 @@ cd projects
 git clone https://github.com/reybinario/Brickbattle-Weapons.git
 ```
 
-4. Run Aftman to install tools
+4. Run Aftman and Rokit to install tools
 
 ```zsh
 cd Brickbattle-Weapons
 aftman install
+rokit install
 ```
 
-Aftman just installed a bunch of tools for you. They are:
+The tool managers just installed these tools:
 
 * [wally](https://github.com/UpliftGames/wally) for package management. ([What's that?](https://dev.to/stackblitz/explain-like-im-five-package-managers-1a7a))
 * [wally-package-types](https://github.com/JohnnyMorganz/wally-package-types) fixes the issue of wally thunks not including exported types, necessary for proper Luau type checking support.
-* [zap](https://zap.redblox.dev/) for network code generation. In this package, we don't manage our own remotes, Zap does it for us.
+* [Blink](https://github.com/1Axen/blink) for network code generation. In this package, Blink manages our remotes. Run `blink network.blink` after changing the schema.
 * and finally, [Rojo](https://rojo.space/), see below.
 
 ### 5. Use Rojo for VS Code -> Roblox Studio Sync
@@ -79,7 +80,7 @@ I recommend the following for Roblox:
 * [StyLua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua) for code formatting and styling.
 * [Selene](https://marketplace.visualstudio.com/items?itemName=Kampfkarren.selene-vscode) for code linting ([what's that?](https://stackoverflow.com/questions/8503559/what-is-linting)).
 * [Roblox UI](https://marketplace.visualstudio.com/items?itemName=filiptibell.roblox-ui) for data model visualization (explorer/properties).
-* [Zap Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=naxblox.zap-nax) for highlighting of keywords in the .zap file.
+* [Blink](https://github.com/1Axen/blink) syntax support for highlighting the .blink file.
 
 Some others I recommend for general development:
 

@@ -21,7 +21,7 @@ function CreationReceiver.setCallback()
         if projectile == "wall" then continue end
 
         local eventName = projectile .. "CreateReplicate"
-        NetworkClient[eventName].SetCallback(function(data)
+        NetworkClient[eventName].On(function(data)
             handleCreate(projectile, data)
         end)
     end

@@ -7,6 +7,7 @@ local VulcanClient = script.Parent.Parent
 local SuperballCreator = require(VulcanClient.Projectile.ProjectileCreator.SuperballCreator)
 local Config = require(VulcanClient.Management.ClientConfig)
 local NetworkClient = require(script.Parent.Parent.Network.NetworkClient)
+local NetworkEncoding = require(VulcanClient.Common.NetworkEncoding)
 
 local config = Config.get()
 
@@ -27,12 +28,12 @@ function ToolActivator.fireSuperball(hit: BasePart?, endPosition: Vector3)
 	superball.Parent = workspace
 
     NetworkClient.superballCreate.Fire({
-        color = Vector3.new(superball.Color.R, superball.Color.G, superball.Color.B),
+        color = superball.Color,
         count = sbs,
-        position = superball.Position,
-        velocity = superball.AssemblyLinearVelocity,
+        position = NetworkEncoding.toI16Vector(superball.Position),
+        velocity = NetworkEncoding.toI16Vector(superball.AssemblyLinearVelocity),
     })
-    sbs = sbs + 1
+    sbs = NetworkEncoding.nextU16Count(sbs)
 
     -- TODO:
     -- tell client projectile registry that we created and fired a superball

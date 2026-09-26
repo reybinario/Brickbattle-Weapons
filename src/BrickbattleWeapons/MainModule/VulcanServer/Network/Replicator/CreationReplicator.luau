@@ -27,7 +27,7 @@ function CreationReplicator.setCallback()
         local create = string.lower(brickBattleObject) .. "Create"
         print("setting callback for:", create)
         print(NetworkServer)
-        NetworkServer[create].SetCallback(function(player, data)
+        NetworkServer[create].On(function(player, data)
             validateAndReplicate(brickBattleObject, player, data)
         end)
     end

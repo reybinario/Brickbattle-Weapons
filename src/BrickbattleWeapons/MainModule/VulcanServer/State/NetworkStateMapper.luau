@@ -3,7 +3,12 @@ local NetworkStateMapper = {}
 
 local Common = script.Parent.Parent.Parent.VulcanClient.Common
 local StateSchema = require(Common.StateSchema)
-local NetworkTypes = require(Common.NetworkTypes)
+-- Blink generates event methods, not standalone payload types.
+type MovingCreateData = { count: number, position: Vector3, velocity: Vector3 }
+type PaintballCreateData = MovingCreateData & { color: Color3 }
+type RocketCreateData = { count: number, cFrame: CFrame }
+type BombCreateData = { count: number, position: Vector3 }
+type WallCreateData = { count: number, cFrame: CFrame }
 local WeaponTypes = require(Common.WeaponTypes)
 
 -- Private logic helper
@@ -18,7 +23,7 @@ local function getBase(count: number)
 end
 
 local Mappers = {
-	superball = function(data: NetworkTypes.movingProjectileCreateData): StateSchema.SuperballState
+	superball = function(data: MovingCreateData): StateSchema.SuperballState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -32,7 +37,7 @@ local Mappers = {
 		}
 	end,
 
-	pellet = function(data: NetworkTypes.movingProjectileCreateData): StateSchema.SlingshotState
+	pellet = function(data: MovingCreateData): StateSchema.SlingshotState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -46,7 +51,7 @@ local Mappers = {
 		}
 	end,
 
-    paintball = function(data: NetworkTypes.paintballCreateData): StateSchema.PaintballState
+    paintball = function(data: PaintballCreateData): StateSchema.PaintballState
         local base = getBase(data.count)
         return {
             count = base.count,
@@ -60,7 +65,7 @@ local Mappers = {
         }
     end,
 
-	rocket = function(data: NetworkTypes.rocketCreateData): StateSchema.RocketState
+	rocket = function(data: RocketCreateData): StateSchema.RocketState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -74,7 +79,7 @@ local Mappers = {
 		}
 	end,
 
-	bomb = function(data: NetworkTypes.bombCreateData): StateSchema.BombState
+	bomb = function(data: BombCreateData): StateSchema.BombState
 		local base = getBase(data.count)
 		return {
 			count = base.count,
@@ -89,7 +94,7 @@ local Mappers = {
 		}
 	end,
 
-	wall = function(data: NetworkTypes.wallCreateData): StateSchema.WallState
+	wall = function(data: WallCreateData): StateSchema.WallState
         -- TODO: better reconcile wall network data with internal state
 		return {
 			count = data.count,
@@ -98,7 +103,7 @@ local Mappers = {
 	end,
 }
 
-type creationType = NetworkTypes.bombCreateData | NetworkTypes.rocketCreateData | NetworkTypes.movingProjectileCreateData | NetworkTypes.wallCreateData | NetworkTypes.paintballCreateData
+type creationType = BombCreateData | RocketCreateData | MovingCreateData | WallCreateData | PaintballCreateData
 function NetworkStateMapper.toProjectileState(
     projectile: WeaponTypes.ProjectileType,
     networkData: creationType

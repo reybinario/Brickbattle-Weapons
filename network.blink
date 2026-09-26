@@ -1,4 +1,5 @@
 option ServerOutput = "./src/BrickbattleWeapons/MainModule/VulcanServer/Network/NetworkServer.luau"
+option RemoteScope = "VULCAN_BRICKBATTLE_WEAPONS"
 option ClientOutput  = "./src/BrickbattleWeapons/MainModule/VulcanClient/Network/NetworkClient.luau"
 
 type PositionVector3 = vector<i16>
@@ -316,11 +317,12 @@ event swordGripUpdate {
     }
 }
 
-event trowelPlace {
+event wallCreate {
     from: Client,
     type: Reliable,
     call: SingleAsync,
     data: struct {
+        count: u16,
         cFrame: CFrame
     }
 }

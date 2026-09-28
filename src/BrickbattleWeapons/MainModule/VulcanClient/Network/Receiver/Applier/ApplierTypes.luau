@@ -7,7 +7,6 @@ export type ReceivedProjectileData = {
     velocity: Vector3?,
     cFrame: CFrame?,
     color: Vector3?,
-    validated: boolean?, -- born-inert marker; absent for projectiles without validation
 }
 
 export type WorldApplier = {

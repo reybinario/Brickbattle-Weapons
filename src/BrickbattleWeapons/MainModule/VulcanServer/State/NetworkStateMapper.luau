@@ -34,7 +34,6 @@ local Mappers = {
 			velocity = data.velocity,
 			originPosition = data.position,
 			originVelocity = data.velocity,
-			validated = false, -- born inert: UpdateReplicator flips this after validation
 			hitCount = 0,
 		}
 	end,

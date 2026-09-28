@@ -55,7 +55,9 @@ function CreationValidator.conductSecurityValidations(player: Player, data: Stat
         local valid = SuperballCore.validateLaunch({
             position = shot.position, velocity = shot.velocity,
             firingPosition = root.Position, aimDirection = offset.Unit,
-            ammoAvailable = true, -- no server ammo ledger exists yet
+            ammoAvailable = true, -- by design: Ken ruled 2026-09-28 that fire gating is
+            -- reload-only ("There's only reload. No ammo counts"). The reload check
+            -- above is the whole fire-rate rule; no ammo ledger exists or is planned.
             elapsedSinceLastShot = 0, -- cooldown checked in validateReloadTime
             reloadTime = 0, spawnDistance = spawnDistance, speed = speed,
         })

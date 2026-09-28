@@ -176,9 +176,9 @@ Queue.Reliable[17] = table.create(256)
 Queue.Reliable[20] = table.create(256)
 export type PositionVector3 = Vector3
 export type VelocityDeltaVector3 = Vector3
-function SerdesFunctions.WriteEVENT_superballCreate(Value: { count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number }): ()
-	-- Allocate BLOCK: 26 bytes
-	local BLOCK_START = Allocate(26)
+function SerdesFunctions.WriteEVENT_superballCreate(Value: { count: number, position: Vector3, velocity: Vector3, color: Color3 }): ()
+	-- Allocate BLOCK: 18 bytes
+	local BLOCK_START = Allocate(18)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 0)
 	buffer.writeu16(SendBuffer, BLOCK_START + 1, Value.count)
 	local Vector = Value.position
@@ -193,7 +193,6 @@ function SerdesFunctions.WriteEVENT_superballCreate(Value: { count: number, posi
 	buffer.writeu8(SendBuffer, BLOCK_START + 15, Color.R * 255)
 	buffer.writeu8(SendBuffer, BLOCK_START + 16, Color.G * 255)
 	buffer.writeu8(SendBuffer, BLOCK_START + 17, Color.B * 255)
-	buffer.writef64(SendBuffer, BLOCK_START + 18, Value.timestamp)
 end
 
 function SerdesFunctions.ReadEVENT_superballCreateReplicate(): ({ count: number, player: Player, position: Vector3, velocity: Vector3 })
@@ -217,8 +216,8 @@ function SerdesFunctions.ReadEVENT_superballCreateReplicate(): ({ count: number,
 end
 
 function SerdesFunctions.WriteEVENT_superballUpdate(Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number }): ()
-	-- Allocate BLOCK: 25 bytes
-	local BLOCK_START = Allocate(25)
+	-- Allocate BLOCK: 19 bytes
+	local BLOCK_START = Allocate(19)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 0)
 	buffer.writeu16(SendBuffer, BLOCK_START + 1, Value.count)
 	buffer.writeu16(SendBuffer, BLOCK_START + 3, Value.packetCount)
@@ -230,7 +229,7 @@ function SerdesFunctions.WriteEVENT_superballUpdate(Value: { count: number, pack
 	buffer.writei16(SendBuffer, BLOCK_START + 11, Vector.X)
 	buffer.writei16(SendBuffer, BLOCK_START + 13, Vector.Y)
 	buffer.writei16(SendBuffer, BLOCK_START + 15, Vector.Z)
-	buffer.writef64(SendBuffer, BLOCK_START + 17, Value.timestamp)
+	buffer.writeu16(SendBuffer, BLOCK_START + 17, Value.timestamp)
 end
 
 function SerdesFunctions.ReadEVENT_superballReplicate(): ({ count: number, packetCount: number, player: Player, position: Vector3, velocity: Vector3 })
@@ -1007,7 +1006,7 @@ local Returns = table.freeze({
 	StepReplication = StepReplication,
 
 	superballCreate = {
-		Fire = function(Value: { count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number }): ()
+		Fire = function(Value: { count: number, position: Vector3, velocity: Vector3, color: Color3 }): ()
 			SerdesFunctions.WriteEVENT_superballCreate(Value)
 		end
 	},

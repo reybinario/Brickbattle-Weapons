@@ -1,0 +1,90 @@
+# Runs the repo's Luau tests inside a REAL Roblox server instance, using the
+# Open Cloud Luau Execution API. Pattern adapted from Roblox's MIT-licensed
+# place-ci-cd-demo: https://github.com/Roblox/place-ci-cd-demo
+#
+# One-time setup (docs/engine-testing.md has the steps):
+#   secret   ROBLOX_API_KEY           - Open Cloud API key scoped to the test place
+#   variable ROBLOX_TEST_UNIVERSE_ID  - the test experience's universe ID
+#   variable ROBLOX_TEST_PLACE_ID     - the test experience's root place ID
+# Until those exist, this workflow skips with a warning instead of failing.
+
+name: Engine tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  engine-tests:
+    name: Build and test in the Roblox engine
+    runs-on: ubuntu-latest
+    # The Luau Execution API allows few concurrent tasks per universe, so
+    # serialize runs instead of failing on the limit.
+    concurrency:
+      group: luau-execution
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rojo and Wally (versions pinned in aftman.toml)
+        run: |
+          curl -sSL -o rojo.zip https://github.com/rojo-rbx/rojo/releases/download/v7.4.0-rc3/rojo-7.4.0-rc3-linux-x86_64.zip
+          unzip -q rojo.zip && chmod +x rojo && sudo mv rojo /usr/local/bin/
+          curl -sSL -o wally.zip https://github.com/UpliftGames/wally/releases/download/v0.3.2/wally-v0.3.2-linux.zip
+          unzip -q wally.zip && chmod +x wally && sudo mv wally /usr/local/bin/
+
+      - name: Install Wally packages
+        run: wally install
+
+      - name: Check Open Cloud credentials
+        id: creds
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          ROBLOX_UNIVERSE_ID: ${{ vars.ROBLOX_TEST_UNIVERSE_ID }}
+          ROBLOX_PLACE_ID: ${{ vars.ROBLOX_TEST_PLACE_ID }}
+        run: |
+          if [ -n "$ROBLOX_API_KEY" ] && [ -n "$ROBLOX_UNIVERSE_ID" ] && [ -n "$ROBLOX_PLACE_ID" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Open Cloud credentials are not set up yet (secret ROBLOX_API_KEY, variables ROBLOX_TEST_UNIVERSE_ID, ROBLOX_TEST_PLACE_ID). See docs/engine-testing.md - skipping engine tests."
+          fi
+
+      - name: Build place and run tests in-engine
+        if: steps.creds.outputs.configured == 'true'
+        env:
+          ROBLOX_API_KEY: ${{ secrets.ROBLOX_API_KEY }}
+          ROBLOX_UNIVERSE_ID: ${{ vars.ROBLOX_TEST_UNIVERSE_ID }}
+          ROBLOX_PLACE_ID: ${{ vars.ROBLOX_TEST_PLACE_ID }}
+        run: sh scripts/shell/run-engine-tests.sh test.project.json tasks/runEngineTests.luau 2>&1 | tee /tmp/engine-test-output.txt
+
+      - name: Write results summary
+        if: ${{ always() && steps.creds.outputs.configured == 'true' }}
+        run: |
+          {
+            echo '## Engine test results'
+            echo '```'
+            tail -n 40 /tmp/engine-test-output.txt 2>/dev/null || echo '(no output captured)'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment results on the pull request
+        if: ${{ always() && github.event_name == 'pull_request' && steps.creds.outputs.configured == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          {
+            echo '### Engine tests (Open Cloud)'
+            echo '```'
+            tail -n 30 /tmp/engine-test-output.txt 2>/dev/null || echo '(no output captured)'
+            echo '```'
+          } > /tmp/pr-comment.md
+          gh pr comment "$PR_NUMBER" --body-file /tmp/pr-comment.md

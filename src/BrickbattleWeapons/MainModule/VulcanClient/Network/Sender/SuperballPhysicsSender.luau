@@ -20,6 +20,8 @@ local SuperballPhysicsSender = {}
 local UPDATE_INTERVAL_SECONDS = 1 / 15
 -- Keep in step with SuperballValidationCore.MAX_SEGMENT_SECONDS on the server.
 local FREE_FLIGHT_WINDOW_SECONDS = 1
+local TICKS_PER_SECOND = 100
+local TICK_MODULUS = 65536
 
 type TrackedBall = {
     part: BasePart,
@@ -40,7 +42,8 @@ local function sendUpdate(ball: TrackedBall, now: number)
         packetCount = ball.packetCount,
         position = NetworkEncoding.toI16Vector(ball.part.Position),
         velocity = NetworkEncoding.toI16Vector(ball.part.AssemblyLinearVelocity),
-        timestamp = now,
+        -- Centisecond ticks fit in two bytes; wrap is safe against the server clock.
+        timestamp = math.round(now * TICKS_PER_SECOND) % TICK_MODULUS,
     })
 end
 

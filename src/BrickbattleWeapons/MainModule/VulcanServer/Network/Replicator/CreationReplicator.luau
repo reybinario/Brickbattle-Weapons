@@ -41,12 +41,6 @@ function CreationReplicator.replicateCreatedProjectile(projectile: WeaponTypes.P
     for _, key in ipairs(weaponSpecificNetworkFields[projectile]) do
         payload[key] = data[key]
     end
-    if projectile == "superball" then
-        -- Born inert: the flag travels with the creation itself, so no client
-        -- can ever see a superball without a validation state. UpdateReplicator
-        -- fires the live transition after the server validates its flight.
-        payload.validated = false
-    end
 
     replicateEvent.FireExcept(player, payload)
 end

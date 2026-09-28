@@ -15,7 +15,6 @@ event superballCreate {
         position: PositionVector3,
         velocity: VelocityDeltaVector3,
         color: Color3,
-        timestamp: f64,
     },
 }
 event superballCreateReplicate {
@@ -38,7 +37,7 @@ event superballUpdate {
         packetCount: u16,
         position: PositionVector3,
         velocity: VelocityDeltaVector3,
-        timestamp: f64,
+        timestamp: u16,
     },
 }
 event superballReplicate {

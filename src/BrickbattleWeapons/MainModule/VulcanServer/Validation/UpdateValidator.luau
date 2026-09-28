@@ -23,7 +23,10 @@ local UpdateValidator = {}
 -- below trusts server RECEIPT timing only; the client stamp is a sanity
 -- check against gross clock skew or replayed packets. Prototype bound:
 -- calibrate against honest-player Studio traces.
-UpdateValidator.MAX_CLOCK_SKEW_SECONDS = 2
+local TICKS_PER_SECOND = 100
+local TICK_MODULUS = 65536
+local HALF_TICK_MODULUS = TICK_MODULUS / 2
+local MAX_CLOCK_SKEW_TICKS = 2 * TICKS_PER_SECOND
 
 -- The client counts its shots from 0 and wraps at 2^16; StateRepository
 -- assigns each accepted creation the next 1-based id.
@@ -44,7 +47,10 @@ function UpdateValidator.validateSuperballUpdate(player: Player, data: any): (bo
     end
 
     local now = workspace:GetServerTimeNow()
-    if math.abs(data.timestamp - now) > UpdateValidator.MAX_CLOCK_SKEW_SECONDS then
+    local serverTick = math.round(now * TICKS_PER_SECOND) % TICK_MODULUS
+    -- Take the shortest signed path around the counter so a wrap is not mistaken for a huge clock jump.
+    local tickDifference = ((data.timestamp - serverTick + HALF_TICK_MODULUS) % TICK_MODULUS) - HALF_TICK_MODULUS
+    if math.abs(tickDifference) > MAX_CLOCK_SKEW_TICKS then
         return false, nil, id
     end
 

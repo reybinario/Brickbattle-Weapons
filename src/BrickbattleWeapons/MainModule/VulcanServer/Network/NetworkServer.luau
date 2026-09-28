@@ -181,9 +181,9 @@ Queue.Reliable[18] = table.create(256)
 Queue.Reliable[19] = table.create(256)
 export type PositionVector3 = Vector3
 export type VelocityDeltaVector3 = Vector3
-function SerdesFunctions.ReadEVENT_superballCreate(): ({ count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number })
-	-- Read BLOCK: 25 bytes
-	local BLOCK_START = Read(25)
+function SerdesFunctions.ReadEVENT_superballCreate(): ({ count: number, position: Vector3, velocity: Vector3, color: Color3 })
+	-- Read BLOCK: 17 bytes
+	local BLOCK_START = Read(17)
 	local Value = {} :: any
 	Value.count = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
 	local X = buffer.readi16(RecieveBuffer, BLOCK_START + 2)
@@ -195,7 +195,6 @@ function SerdesFunctions.ReadEVENT_superballCreate(): ({ count: number, position
 	Z = buffer.readi16(RecieveBuffer, BLOCK_START + 12)
 	Value.velocity = Vector3.new(X, Y, Z)
 	Value.color = Color3.fromRGB(buffer.readu8(RecieveBuffer, BLOCK_START + 14), buffer.readu8(RecieveBuffer, BLOCK_START + 15), buffer.readu8(RecieveBuffer, BLOCK_START + 16))
-	Value.timestamp = buffer.readf64(RecieveBuffer, BLOCK_START + 17)
 	return Value
 end
 
@@ -216,8 +215,8 @@ function SerdesFunctions.WriteEVENT_superballCreateReplicate(Value: { count: num
 end
 
 function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number })
-	-- Read BLOCK: 24 bytes
-	local BLOCK_START = Read(24)
+	-- Read BLOCK: 18 bytes
+	local BLOCK_START = Read(18)
 	local Value = {} :: any
 	Value.count = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
 	Value.packetCount = buffer.readu16(RecieveBuffer, BLOCK_START + 2)
@@ -229,7 +228,7 @@ function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCo
 	Y = buffer.readi16(RecieveBuffer, BLOCK_START + 12)
 	Z = buffer.readi16(RecieveBuffer, BLOCK_START + 14)
 	Value.velocity = Vector3.new(X, Y, Z)
-	Value.timestamp = buffer.readf64(RecieveBuffer, BLOCK_START + 16)
+	Value.timestamp = buffer.readu16(RecieveBuffer, BLOCK_START + 16)
 	return Value
 end
 
@@ -925,7 +924,7 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 0 then
-			local Value: { count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number } = SerdesFunctions.ReadEVENT_superballCreate()
+			local Value: { count: number, position: Vector3, velocity: Vector3, color: Color3 } = SerdesFunctions.ReadEVENT_superballCreate()
 			if Events.Reliable[0] ~= nil then
 				task.spawn(Events.Reliable[0], Player, Value)
 			else
@@ -1101,7 +1100,7 @@ local Returns = table.freeze({
 	StepReplication = StepReplication,
 
 	superballCreate = {
-		On = function(Listener: (Player: Player, Value: { count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number }) -> ()): () -> ()
+		On = function(Listener: (Player: Player, Value: { count: number, position: Vector3, velocity: Vector3, color: Color3 }) -> ()): () -> ()
 			Events.Reliable[0] = Listener
 			for Index, Arguments in Queue.Reliable[0] do
 				task.spawn(Listener, table.unpack(Arguments))

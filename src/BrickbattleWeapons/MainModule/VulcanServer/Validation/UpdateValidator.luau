@@ -6,8 +6,9 @@ Scope, stated honestly: only LAUNCH-ANCHORED FREE FLIGHT inside the first
 free-flight window after creation is validated. Bounce and contact evidence
 does not exist anywhere in the package yet, so an update that falls outside
 that window - or fails the free-flight arc - is REJECTED, never waved
-through. A rejected ball stays inert and its motion is not replicated.
-Damage authority and the strike system from the design paper are later slices.
+through. Rejection is silent: the update is dropped, its motion is not
+replicated, and no client is told. Damage authority and the strike system
+from the design paper are later slices.
 ]]
 local VulcanServer = script.Parent.Parent
 local Common = VulcanServer.Parent.VulcanClient.Common

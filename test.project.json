@@ -1,0 +1,21 @@
+{
+  "name": "brickbattle-weapons-engine-tests",
+  "tree": {
+    "$className": "DataModel",
+
+    "ServerScriptService": {
+      "MainModule": {
+        "$path": "src/BrickbattleWeapons/MainModule"
+      }
+    },
+
+    "ReplicatedStorage": {
+      "Packages": {
+        "$path": "Packages"
+      },
+      "Tests": {
+        "$path": "tests"
+      }
+    }
+  }
+}

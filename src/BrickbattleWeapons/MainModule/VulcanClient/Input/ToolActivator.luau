@@ -7,6 +7,7 @@ local VulcanClient = script.Parent.Parent
 local SuperballCreator = require(VulcanClient.Projectile.ProjectileCreator.SuperballCreator)
 local Config = require(VulcanClient.Management.ClientConfig)
 local NetworkClient = require(script.Parent.Parent.Network.NetworkClient)
+local PhysicsSender = require(script.Parent.Parent.Network.Sender.PhysicsSender)
 local NetworkEncoding = require(VulcanClient.Common.NetworkEncoding)
 
 local config = Config.get()
@@ -32,7 +33,9 @@ function ToolActivator.fireSuperball(hit: BasePart?, endPosition: Vector3)
         count = sbs,
         position = NetworkEncoding.toI16Vector(superball.Position),
         velocity = NetworkEncoding.toI16Vector(superball.AssemblyLinearVelocity),
+        timestamp = workspace:GetServerTimeNow(),
     })
+    PhysicsSender.trackSuperball(superball, sbs)
     sbs = NetworkEncoding.nextU16Count(sbs)
 
     -- TODO:

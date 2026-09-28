@@ -33,7 +33,6 @@ function ToolActivator.fireSuperball(hit: BasePart?, endPosition: Vector3)
         count = sbs,
         position = NetworkEncoding.toI16Vector(superball.Position),
         velocity = NetworkEncoding.toI16Vector(superball.AssemblyLinearVelocity),
-        timestamp = workspace:GetServerTimeNow(),
     })
     SuperballPhysicsSender.trackSuperball(superball, sbs)
     sbs = NetworkEncoding.nextU16Count(sbs)

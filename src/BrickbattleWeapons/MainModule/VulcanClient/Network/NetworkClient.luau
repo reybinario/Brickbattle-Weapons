@@ -174,7 +174,6 @@ Queue.Reliable[15] = table.create(256)
 Queue.Unreliable[9] = table.create(256)
 Queue.Reliable[17] = table.create(256)
 Queue.Reliable[20] = table.create(256)
-Queue.Reliable[21] = table.create(256)
 export type PositionVector3 = Vector3
 export type VelocityDeltaVector3 = Vector3
 function SerdesFunctions.WriteEVENT_superballCreate(Value: { count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number }): ()
@@ -197,9 +196,9 @@ function SerdesFunctions.WriteEVENT_superballCreate(Value: { count: number, posi
 	buffer.writef64(SendBuffer, BLOCK_START + 18, Value.timestamp)
 end
 
-function SerdesFunctions.ReadEVENT_superballCreateReplicate(): ({ count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean })
-	-- Read BLOCK: 15 bytes
-	local BLOCK_START = Read(15)
+function SerdesFunctions.ReadEVENT_superballCreateReplicate(): ({ count: number, player: Player, position: Vector3, velocity: Vector3 })
+	-- Read BLOCK: 14 bytes
+	local BLOCK_START = Read(14)
 	local Value = {} :: any
 	Value.count = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
 	RecieveInstanceCursor += 1
@@ -214,7 +213,6 @@ function SerdesFunctions.ReadEVENT_superballCreateReplicate(): ({ count: number,
 	Y = buffer.readi16(RecieveBuffer, BLOCK_START + 10)
 	Z = buffer.readi16(RecieveBuffer, BLOCK_START + 12)
 	Value.velocity = Vector3.new(X, Y, Z)
-	Value.validated = (buffer.readu8(RecieveBuffer, BLOCK_START + 14) == 1)
 	return Value
 end
 
@@ -726,19 +724,6 @@ function SerdesFunctions.ReadEVENT_deleteProjectileReplicate(): ({ projectileTyp
 	return Value
 end
 
-function SerdesFunctions.ReadEVENT_superballValidation(): ({ count: number, player: Player, validated: boolean })
-	-- Read BLOCK: 3 bytes
-	local BLOCK_START = Read(3)
-	local Value = {} :: any
-	Value.count = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
-	RecieveInstanceCursor += 1
-	Value.player = RecieveInstances[RecieveInstanceCursor]
-	if typeof(Value.player) ~= "Instance" then error(`Expected an Instance, got {typeof(Value.player)} instead.`) end
-	if not Value.player:IsA("Player") then error(`Expected an Instance of type "Player", got "{Value.player.ClassName}" instead.`) end
-	Value.validated = (buffer.readu8(RecieveBuffer, BLOCK_START + 2) == 1)
-	return Value
-end
-
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
@@ -838,9 +823,6 @@ if not RunService:IsRunning() then
 	deleteProjectileReplicate = {
 		On = NOOP
 	},
-	superballValidation = {
-		On = NOOP
-	},
 	})
 	return Returns :: BLINK_EVENTS_SYMBOL
 end
@@ -884,7 +866,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 1 then
-			local Value: { count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean } = SerdesFunctions.ReadEVENT_superballCreateReplicate()
+			local Value: { count: number, player: Player, position: Vector3, velocity: Vector3 } = SerdesFunctions.ReadEVENT_superballCreateReplicate()
 			if Events.Reliable[1] ~= nil then
 				task.spawn(Events.Reliable[1], Value)
 			else
@@ -973,16 +955,6 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 				end
 				table.insert(Queue.Reliable[20], {Value} :: {any})
 			end
-		elseif Index == 21 then
-			local Value: { count: number, player: Player, validated: boolean } = SerdesFunctions.ReadEVENT_superballValidation()
-			if Events.Reliable[21] ~= nil then
-				task.spawn(Events.Reliable[21], Value)
-			else
-				if #Queue.Reliable[21] > 256 then
-					warn("[Blink]: Event queue of \"superballValidation\" exceeded 256, did you forget to implement a listener?")
-				end
-				table.insert(Queue.Reliable[21], {Value} :: {any})
-			end
 		end
 	end
 end)
@@ -1040,7 +1012,7 @@ local Returns = table.freeze({
 		end
 	},
 	superballCreateReplicate = {
-		On = function(Listener: (Value: { count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean }) -> ()): () -> ()
+		On = function(Listener: (Value: { count: number, player: Player, position: Vector3, velocity: Vector3 }) -> ()): () -> ()
 			Events.Reliable[1] = Listener
 			for Index, Arguments in Queue.Reliable[1] do
 				task.spawn(Listener, table.unpack(Arguments))
@@ -1332,20 +1304,6 @@ local Returns = table.freeze({
 			return function (): ()
 				if Events.Reliable[20] == Listener then
 					Events.Reliable[20] = nil
-				end
-			end
-		end
-	},
-	superballValidation = {
-		On = function(Listener: (Value: { count: number, player: Player, validated: boolean }) -> ()): () -> ()
-			Events.Reliable[21] = Listener
-			for Index, Arguments in Queue.Reliable[21] do
-				task.spawn(Listener, table.unpack(Arguments))
-			end
-			Queue.Reliable[21] = {}
-			return function (): ()
-				if Events.Reliable[21] == Listener then
-					Events.Reliable[21] = nil
 				end
 			end
 		end

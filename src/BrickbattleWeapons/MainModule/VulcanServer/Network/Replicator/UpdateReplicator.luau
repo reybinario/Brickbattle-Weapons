@@ -2,11 +2,11 @@
 --[[
 UpdateReplicator wires superball physics updates to validation.
 
-An accepted update refreshes server state and fans out to the other clients.
-A rejected update is dropped: the ball stays born-inert and nobody else sees
-the motion. The first accepted free-flight report flips the ball live -
-creation replication always marks new balls inert, and only server validation
-moves them out of that state.
+Validation is silent. An accepted update refreshes server state and fans out
+to the other clients; a rejected update is dropped and its motion is never
+replicated. No verdict is sent to any client: the firing client keeps its own
+smooth view either way, and the only consequence of failing validation is
+that effects never happen (damage and explosion authority are later slices).
 ]]
 local Network = script.Parent.Parent
 local VulcanServer = Network.Parent
@@ -36,15 +36,6 @@ function UpdateReplicator.setCallback()
             position = data.position,
             velocity = data.velocity,
         })
-
-        if not shot.validated then
-            shot.validated = true
-            NetworkServer.superballValidation.FireAll({
-                count = data.count,
-                player = player,
-                validated = true,
-            })
-        end
     end)
 end
 

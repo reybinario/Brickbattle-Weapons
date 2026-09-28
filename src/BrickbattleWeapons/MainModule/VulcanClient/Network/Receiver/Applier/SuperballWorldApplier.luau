@@ -22,10 +22,6 @@ function SuperballWorldApplier.applyInitialState(part: Part, receivedData: Appli
     part.Position = position
     part.AssemblyLinearVelocity = velocity
     part.Name = receivedData.player.Name.."'s Superball"..tostring(receivedData.count)
-    -- Born inert: written at creation so the ball never exists without a
-    -- validation state. ValidationReceiver flips it; damage consumers must
-    -- read it (those consumers are later slices).
-    part:SetAttribute("VulcanValidated", receivedData.validated == true)
 end
 
 function SuperballWorldApplier.getParent(receivedData: ApplierTypes.ReceivedProjectileData)

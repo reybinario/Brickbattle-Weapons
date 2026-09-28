@@ -181,9 +181,9 @@ Queue.Reliable[18] = table.create(256)
 Queue.Reliable[19] = table.create(256)
 export type PositionVector3 = Vector3
 export type VelocityDeltaVector3 = Vector3
-function SerdesFunctions.ReadEVENT_superballCreate(): ({ count: number, position: Vector3, velocity: Vector3, color: Color3 })
-	-- Read BLOCK: 17 bytes
-	local BLOCK_START = Read(17)
+function SerdesFunctions.ReadEVENT_superballCreate(): ({ count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number })
+	-- Read BLOCK: 25 bytes
+	local BLOCK_START = Read(25)
 	local Value = {} :: any
 	Value.count = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
 	local X = buffer.readi16(RecieveBuffer, BLOCK_START + 2)
@@ -195,12 +195,13 @@ function SerdesFunctions.ReadEVENT_superballCreate(): ({ count: number, position
 	Z = buffer.readi16(RecieveBuffer, BLOCK_START + 12)
 	Value.velocity = Vector3.new(X, Y, Z)
 	Value.color = Color3.fromRGB(buffer.readu8(RecieveBuffer, BLOCK_START + 14), buffer.readu8(RecieveBuffer, BLOCK_START + 15), buffer.readu8(RecieveBuffer, BLOCK_START + 16))
+	Value.timestamp = buffer.readf64(RecieveBuffer, BLOCK_START + 17)
 	return Value
 end
 
-function SerdesFunctions.WriteEVENT_superballCreateReplicate(Value: { count: number, player: Player, position: Vector3, velocity: Vector3 }): ()
-	-- Allocate BLOCK: 15 bytes
-	local BLOCK_START = Allocate(15)
+function SerdesFunctions.WriteEVENT_superballCreateReplicate(Value: { count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean }): ()
+	-- Allocate BLOCK: 16 bytes
+	local BLOCK_START = Allocate(16)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 1)
 	buffer.writeu16(SendBuffer, BLOCK_START + 1, Value.count)
 	table.insert(SendInstances, Value.player or Null)
@@ -212,11 +213,12 @@ function SerdesFunctions.WriteEVENT_superballCreateReplicate(Value: { count: num
 	buffer.writei16(SendBuffer, BLOCK_START + 9, Vector.X)
 	buffer.writei16(SendBuffer, BLOCK_START + 11, Vector.Y)
 	buffer.writei16(SendBuffer, BLOCK_START + 13, Vector.Z)
+	buffer.writeu8(SendBuffer, BLOCK_START + 15, Value.validated and 1 or 0)
 end
 
-function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCount: number, position: Vector3, velocity: Vector3 })
-	-- Read BLOCK: 16 bytes
-	local BLOCK_START = Read(16)
+function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number })
+	-- Read BLOCK: 24 bytes
+	local BLOCK_START = Read(24)
 	local Value = {} :: any
 	Value.count = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
 	Value.packetCount = buffer.readu16(RecieveBuffer, BLOCK_START + 2)
@@ -228,6 +230,7 @@ function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCo
 	Y = buffer.readi16(RecieveBuffer, BLOCK_START + 12)
 	Z = buffer.readi16(RecieveBuffer, BLOCK_START + 14)
 	Value.velocity = Vector3.new(X, Y, Z)
+	Value.timestamp = buffer.readf64(RecieveBuffer, BLOCK_START + 16)
 	return Value
 end
 
@@ -719,6 +722,15 @@ function SerdesFunctions.WriteEVENT_deleteProjectileReplicate(Value: { projectil
 	table.insert(SendInstances, Value.player or Null)
 end
 
+function SerdesFunctions.WriteEVENT_superballValidation(Value: { count: number, player: Player, validated: boolean }): ()
+	-- Allocate BLOCK: 4 bytes
+	local BLOCK_START = Allocate(4)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 21)
+	buffer.writeu16(SendBuffer, BLOCK_START + 1, Value.count)
+	table.insert(SendInstances, Value.player or Null)
+	buffer.writeu8(SendBuffer, BLOCK_START + 3, Value.validated and 1 or 0)
+end
+
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
@@ -860,6 +872,12 @@ if not RunService:IsRunning() then
 		FireList = NOOP,
 		FireExcept = NOOP
 	},
+	superballValidation = {
+		Fire = NOOP,
+		FireAll = NOOP,
+		FireList = NOOP,
+		FireExcept = NOOP
+	},
 	})
 	return Returns :: BLINK_EVENTS_SYMBOL
 end
@@ -923,7 +941,7 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 0 then
-			local Value: { count: number, position: Vector3, velocity: Vector3, color: Color3 } = SerdesFunctions.ReadEVENT_superballCreate()
+			local Value: { count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number } = SerdesFunctions.ReadEVENT_superballCreate()
 			if Events.Reliable[0] ~= nil then
 				task.spawn(Events.Reliable[0], Player, Value)
 			else
@@ -1061,7 +1079,7 @@ Unreliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instan
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 0 then
-			local Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3 } = SerdesFunctions.ReadEVENT_superballUpdate()
+			local Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number } = SerdesFunctions.ReadEVENT_superballUpdate()
 			if Events.Unreliable[0] ~= nil then
 				task.spawn(Events.Unreliable[0], Player, Value)
 			end
@@ -1099,7 +1117,7 @@ local Returns = table.freeze({
 	StepReplication = StepReplication,
 
 	superballCreate = {
-		On = function(Listener: (Player: Player, Value: { count: number, position: Vector3, velocity: Vector3, color: Color3 }) -> ()): () -> ()
+		On = function(Listener: (Player: Player, Value: { count: number, position: Vector3, velocity: Vector3, color: Color3, timestamp: number }) -> ()): () -> ()
 			Events.Reliable[0] = Listener
 			for Index, Arguments in Queue.Reliable[0] do
 				task.spawn(Listener, table.unpack(Arguments))
@@ -1113,12 +1131,12 @@ local Returns = table.freeze({
 		end
 	},
 	superballCreateReplicate = {
-		Fire = function(Player: Player, Value: { count: number, player: Player, position: Vector3, velocity: Vector3 }): ()
+		Fire = function(Player: Player, Value: { count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean }): ()
 			Load(PlayersMap[Player])
 			SerdesFunctions.WriteEVENT_superballCreateReplicate(Value)
 			PlayersMap[Player] = Save()
 		end,
-		FireAll = function(Value: { count: number, player: Player, position: Vector3, velocity: Vector3 }): ()
+		FireAll = function(Value: { count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean }): ()
 			Load()
 			SerdesFunctions.WriteEVENT_superballCreateReplicate(Value)
 			local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
@@ -1130,7 +1148,7 @@ local Returns = table.freeze({
 				PlayersMap[Player] = Save()
 			end
 		end,
-		FireList = function(List: {Player}, Value: { count: number, player: Player, position: Vector3, velocity: Vector3 }): ()
+		FireList = function(List: {Player}, Value: { count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean }): ()
 			Load()
 			SerdesFunctions.WriteEVENT_superballCreateReplicate(Value)
 			local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
@@ -1142,7 +1160,7 @@ local Returns = table.freeze({
 				PlayersMap[Player] = Save()
 			end
 		end,
-		FireExcept = function(Except: Player, Value: { count: number, player: Player, position: Vector3, velocity: Vector3 }): ()
+		FireExcept = function(Except: Player, Value: { count: number, player: Player, position: Vector3, velocity: Vector3, validated: boolean }): ()
 			Load()
 			SerdesFunctions.WriteEVENT_superballCreateReplicate(Value)
 			local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
@@ -1159,7 +1177,7 @@ local Returns = table.freeze({
 		end,
 	},
 	superballUpdate = {
-		On = function(Listener: (Player: Player, Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3 }) -> ()): () -> ()
+		On = function(Listener: (Player: Player, Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number }) -> ()): () -> ()
 			Events.Unreliable[0] = Listener
 			return function (): ()
 				if Events.Unreliable[0] == Listener then
@@ -1912,6 +1930,52 @@ local Returns = table.freeze({
 		FireExcept = function(Except: Player, Value: { projectileType: ("Superball" | "Pellet" | "Paintball" | "Rocket" | "Bomb" | "Wall"), count: number, player: Player }): ()
 			Load()
 			SerdesFunctions.WriteEVENT_deleteProjectileReplicate(Value)
+			local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
+			for _, Player in Players:GetPlayers() do
+				if Player == Except then
+					continue
+				end
+				Load(PlayersMap[Player])
+				local Position = Allocate(Size)
+				buffer.copy(SendBuffer, Position, Buffer, 0, Size)
+				table.move(Instances, 1, #Instances, #SendInstances + 1, SendInstances)
+				PlayersMap[Player] = Save()
+			end
+		end,
+	},
+	superballValidation = {
+		Fire = function(Player: Player, Value: { count: number, player: Player, validated: boolean }): ()
+			Load(PlayersMap[Player])
+			SerdesFunctions.WriteEVENT_superballValidation(Value)
+			PlayersMap[Player] = Save()
+		end,
+		FireAll = function(Value: { count: number, player: Player, validated: boolean }): ()
+			Load()
+			SerdesFunctions.WriteEVENT_superballValidation(Value)
+			local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
+			for _, Player in Players:GetPlayers() do
+				Load(PlayersMap[Player])
+				local Position = Allocate(Size)
+				buffer.copy(SendBuffer, Position, Buffer, 0, Size)
+				table.move(Instances, 1, #Instances, #SendInstances + 1, SendInstances)
+				PlayersMap[Player] = Save()
+			end
+		end,
+		FireList = function(List: {Player}, Value: { count: number, player: Player, validated: boolean }): ()
+			Load()
+			SerdesFunctions.WriteEVENT_superballValidation(Value)
+			local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
+			for _, Player in List do
+				Load(PlayersMap[Player])
+				local Position = Allocate(Size)
+				buffer.copy(SendBuffer, Position, Buffer, 0, Size)
+				table.move(Instances, 1, #Instances, #SendInstances + 1, SendInstances)
+				PlayersMap[Player] = Save()
+			end
+		end,
+		FireExcept = function(Except: Player, Value: { count: number, player: Player, validated: boolean }): ()
+			Load()
+			SerdesFunctions.WriteEVENT_superballValidation(Value)
 			local Buffer, Size, Instances = SendBuffer, SendCursor, SendInstances
 			for _, Player in Players:GetPlayers() do
 				if Player == Except then

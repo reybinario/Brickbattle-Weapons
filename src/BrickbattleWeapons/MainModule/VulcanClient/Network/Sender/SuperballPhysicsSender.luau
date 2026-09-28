@@ -1,6 +1,7 @@
 --!strict
 --[[
-PhysicsSender reports locally fired superballs to the server.
+SuperballPhysicsSender reports locally fired superballs to the server.
+One physics sender per projectile type, mirroring the receivers.
 
 Only the first free-flight window is reported. Until bounce evidence exists
 there is nothing honest to say after that window, so reporting simply stops -
@@ -14,7 +15,7 @@ local NetworkClient = require(script.Parent.Parent.NetworkClient)
 local Common = script.Parent.Parent.Parent.Common
 local NetworkEncoding = require(Common.NetworkEncoding)
 
-local PhysicsSender = {}
+local SuperballPhysicsSender = {}
 
 local UPDATE_INTERVAL_SECONDS = 1 / 15
 -- Keep in step with SuperballValidationCore.MAX_SEGMENT_SECONDS on the server.
@@ -62,7 +63,7 @@ end
 
 -- Registers a just-fired superball and sends its first report immediately,
 -- so the server sees motion well inside the free-flight window.
-function PhysicsSender.trackSuperball(part: BasePart, count: number)
+function SuperballPhysicsSender.trackSuperball(part: BasePart, count: number)
     local ball: TrackedBall = {
         part = part,
         count = count,
@@ -77,4 +78,4 @@ function PhysicsSender.trackSuperball(part: BasePart, count: number)
     end
 end
 
-return PhysicsSender
+return SuperballPhysicsSender

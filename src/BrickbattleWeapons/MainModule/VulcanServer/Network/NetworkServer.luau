@@ -214,9 +214,9 @@ function SerdesFunctions.WriteEVENT_superballCreateReplicate(Value: { count: num
 	buffer.writei16(SendBuffer, BLOCK_START + 13, Vector.Z)
 end
 
-function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCount: number, position: Vector3, velocity: Vector3 })
-	-- Read BLOCK: 16 bytes
-	local BLOCK_START = Read(16)
+function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number })
+	-- Read BLOCK: 18 bytes
+	local BLOCK_START = Read(18)
 	local Value = {} :: any
 	Value.count = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
 	Value.packetCount = buffer.readu16(RecieveBuffer, BLOCK_START + 2)
@@ -228,6 +228,7 @@ function SerdesFunctions.ReadEVENT_superballUpdate(): ({ count: number, packetCo
 	Y = buffer.readi16(RecieveBuffer, BLOCK_START + 12)
 	Z = buffer.readi16(RecieveBuffer, BLOCK_START + 14)
 	Value.velocity = Vector3.new(X, Y, Z)
+	Value.timestamp = buffer.readu16(RecieveBuffer, BLOCK_START + 16)
 	return Value
 end
 
@@ -1061,7 +1062,7 @@ Unreliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instan
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 0 then
-			local Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3 } = SerdesFunctions.ReadEVENT_superballUpdate()
+			local Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number } = SerdesFunctions.ReadEVENT_superballUpdate()
 			if Events.Unreliable[0] ~= nil then
 				task.spawn(Events.Unreliable[0], Player, Value)
 			end
@@ -1159,7 +1160,7 @@ local Returns = table.freeze({
 		end,
 	},
 	superballUpdate = {
-		On = function(Listener: (Player: Player, Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3 }) -> ()): () -> ()
+		On = function(Listener: (Player: Player, Value: { count: number, packetCount: number, position: Vector3, velocity: Vector3, timestamp: number }) -> ()): () -> ()
 			Events.Unreliable[0] = Listener
 			return function (): ()
 				if Events.Unreliable[0] == Listener then

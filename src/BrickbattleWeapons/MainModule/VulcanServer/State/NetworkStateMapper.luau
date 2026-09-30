@@ -33,6 +33,7 @@ local Mappers = {
 			position = data.position,
 			velocity = data.velocity,
 			originPosition = data.position,
+			originVelocity = data.velocity,
 			hitCount = 0,
 		}
 	end,

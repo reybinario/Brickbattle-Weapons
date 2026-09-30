@@ -5,6 +5,7 @@ export type SuperballState = { -- count value (incremented each time weapon is f
     hitCount: number, -- number of times the superball has ricocheted (we will use this calculate damaging halving)
     timestamp: number,
     originPosition: Vector3,
+    originVelocity: Vector3, -- launch anchor for free-flight validation; never rewritten by updates
     originTimestamp: number,
     active: boolean,
     count: number

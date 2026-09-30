@@ -15,7 +15,7 @@ local Common = VulcanServer.Parent.VulcanClient.Common
 
 local StateSchema = require(Common.StateSchema)
 local StateRepository = require(VulcanServer.State.StateRepository)
-local Core = require(script.Parent.SuperballValidationCore)
+local ArcValidator = require(script.Parent.ArcValidator)
 
 local UpdateValidator = {}
 
@@ -55,7 +55,7 @@ function UpdateValidator.validateSuperballUpdate(player: Player, data: any): (bo
     end
 
     local age = now - shot.originTimestamp
-    if age > Core.MAX_SEGMENT_SECONDS then
+    if age > ArcValidator.MAX_SEGMENT_SECONDS then
         -- Past the free-flight window a real ball must have bounced. Bounce
         -- handling is pending, so reject instead of pretending to verify.
         return false, nil, id
@@ -63,7 +63,7 @@ function UpdateValidator.validateSuperballUpdate(player: Player, data: any): (bo
 
     -- Every report is measured against the same validated launch anchor.
     -- Re-anchoring on each accepted packet would refill the error budget.
-    local valid, reason = Core.validateSegment({
+    local valid, reason = ArcValidator.validateSegment({
         launchPosition = shot.originPosition,
         launchVelocity = shot.originVelocity,
         startPosition = shot.originPosition,

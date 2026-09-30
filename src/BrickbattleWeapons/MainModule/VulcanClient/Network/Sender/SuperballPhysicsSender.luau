@@ -18,7 +18,7 @@ local NetworkEncoding = require(Common.NetworkEncoding)
 local SuperballPhysicsSender = {}
 
 local UPDATE_INTERVAL_SECONDS = 1 / 15
--- Keep in step with SuperballValidationCore.MAX_SEGMENT_SECONDS on the server.
+-- Keep in step with ArcValidator.MAX_SEGMENT_SECONDS on the server.
 local FREE_FLIGHT_WINDOW_SECONDS = 1
 local TICKS_PER_SECOND = 100
 local TICK_MODULUS = 65536

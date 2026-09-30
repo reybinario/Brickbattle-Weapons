@@ -52,19 +52,16 @@ function validateAndReplicate(projectile: WeaponTypes.ProjectileType, player: Pl
         return
     end
 
-    StateRepository.updatePlayerProjectileField(player, weapon, "counts", data.count)
-
     if not CreationValidator.validateReloadTime(player, requestedInitialState, weapon) then
         return
     end
-
-    StateRepository.updatePlayerProjectileField(player, weapon, "lastUsed", workspace:GetServerTimeNow())
 
     if not CreationValidator.conductSecurityValidations(player, requestedInitialState, weapon) then
         return
     end
 
     StateRepository.createProjectileState(player, weapon, requestedInitialState)
+    StateRepository.updatePlayerProjectileField(player, weapon, "lastUsed", workspace:GetServerTimeNow())
 
     CreationReplicator.replicateCreatedProjectile(projectile, player, data)
 end

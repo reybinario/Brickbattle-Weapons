@@ -4,7 +4,7 @@ local VulcanClient = script.Parent.Parent.Parent.VulcanClient.Common
 local StateSchema = require(VulcanClient.StateSchema)
 local Config = require(script.Parent.Parent.Management.Config)
 local StateRepository = require(script.Parent.Parent.State.StateRepository)
-local SuperballCore = require(script.Parent.SuperballValidationCore)
+local ArcValidator = require(script.Parent.ArcValidator)
 
 local CreationValidator = {}
 
@@ -52,12 +52,9 @@ function CreationValidator.conductSecurityValidations(player: Player, data: Stat
         if offset.Magnitude < 0.001 then return false end
         -- No server-recorded aim snapshot exists yet. This only checks that
         -- launch velocity points along the spawn offset, not the player camera.
-        local valid = SuperballCore.validateLaunch({
+        local valid = ArcValidator.validateLaunch({
             position = shot.position, velocity = shot.velocity,
             firingPosition = root.Position, aimDirection = offset.Unit,
-            ammoAvailable = true, -- by design: Ken ruled 2026-09-28 that fire gating is
-            -- reload-only ("There's only reload. No ammo counts"). The reload check
-            -- above is the whole fire-rate rule; no ammo ledger exists or is planned.
             elapsedSinceLastShot = 0, -- cooldown checked in validateReloadTime
             reloadTime = 0, spawnDistance = spawnDistance, speed = speed,
         })
